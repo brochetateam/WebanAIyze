@@ -4,695 +4,660 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>WebanAIyze — Analiza tu web con IA</title>
-  <meta name="color-scheme" content="light dark"/>
 
-  <!-- Tipografías -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sora:wght@400;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
 
   <style>
-    /* ===============================
-       TOKENS + THEMES
-       =============================== */
-    :root {
-      --bg: #0b0f1a;
-      --surface: #0f1526;
-      --elev: #131c31;
-      --text: #ecf0ff;
-      --muted: #9aa6c7;
-      --border: #1c2541;
+    :root{
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --soft: #f5f7fb;
+      --line: #e7edf5;
+      --text: #334155;
+      --muted: #6b7280;
+      --primary: #20a6e0;
+      --primary-2: #1182b6;
+      --ok: #10b981; --warn: #f59e0b; --bad:#ef4444;
 
-      --accent: #6d5efc;
-      --accent2: #14d4ff;
+      --shadow-card: 0 12px 32px rgba(2,6,23,0.06);
+      --radius: 14px; --radius-lg: 18px;
 
-      --ok:#10b981; --warn:#f59e0b; --bad:#ef4444;
-
-      --card:#0f1526;
-      --radius:16px;
-      --shadow: 0 12px 36px rgba(0,0,0,.35);
-
-      --font-body: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      --font-heading: var(--font-body);
-
-      /* Imagen de fondo inferior (slot) */
-      --bg-image: none; /* ejemplo: url('assets/ilustracion.svg') */
-      --bg-slot-height: 28dvh; /* altura de la zona de imagen */
-    }
-    [data-theme="light"] {
-      --bg:#f7f9ff; --surface:#ffffff; --elev:#f1f5ff; --text:#0f172a; --muted:#4b5563; --border:#e5e7eb; --card:#ffffff;
-      --shadow:0 10px 30px rgba(2,6,23,.08);
+      --headerH: 72px;
+      --footerH: 56px;
     }
 
-    /* Paletas */
-    [data-palette="violet"] { --accent:#6d5efc; --accent2:#14d4ff; }
-    [data-palette="sunset"] { --accent:#f97316; --accent2:#ef4444; }
-    [data-palette="mint"] { --accent:#10b981; --accent2:#14b8a6; }
-    [data-palette="candy"] { --accent:#a855f7; --accent2:#f43f5e; }
-    [data-palette="mono"] { --accent:#64748b; --accent2:#94a3b8; }
-
-    /* Tipografías */
-    [data-font="inter"]  { --font-body: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; --font-heading: var(--font-body); }
-    [data-font="sora"]   { --font-body: Sora, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; --font-heading: var(--font-body); }
-    [data-font="outfit"] { --font-body: Outfit, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; --font-heading: var(--font-body); }
-
-    /* ===============================
-       BASE
-       =============================== */
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: var(--font-body);
-      background:
-        radial-gradient(1200px 800px at 10% -10%, color-mix(in srgb, var(--accent) 30%, transparent) 0%, transparent 60%),
-        radial-gradient(1200px 800px at 110% 10%, color-mix(in srgb, var(--accent2) 26%, transparent) 0%, transparent 60%),
-        var(--bg);
-      color: var(--text);
-      line-height: 1.5;
+    *{box-sizing:border-box}
+    html, body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color:var(--text);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 60%, #f3f7ff 100%);
+      overflow: hidden; /* desktop sin scroll */
     }
-    a { color: inherit; text-decoration: none; }
-    button { font-family: inherit; }
+    a{color:inherit; text-decoration:none}
+    button{font-family:inherit; cursor:pointer}
 
-    .wrap {
-      width: min(1200px, 94%);
-      margin: 0 auto;
-      display: grid;
-      grid-template-rows: 72px auto auto auto;
-      gap: 16px;
+    .container{ width:min(1180px, 92%); margin:0 auto; }
+
+    .screen{ display:grid; grid-template-rows: var(--headerH) 1fr var(--footerH); height: 100dvh; }
+    .topbar{ height: var(--headerH); display:flex; align-items:center; justify-content:space-between; gap:14px; }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .brand-name{ font-weight:800; font-size:1.1rem; color:#4b5563; }
+
+    .nav-right{ display:flex; align-items:center; gap:10px; }
+    .link-home{ background:#e6f4ff; color:#1277b7; border:0; font-weight:800; padding:8px 14px; border-radius:999px; }
+
+    .blog-btn{ background:#e6f4ff; color:#1277b7; border:0; font-weight:700; padding:8px 14px; border-radius:999px; }
+    .socials{ display:flex; gap:8px; }
+    .social{ width:36px; height:36px; border-radius:999px; background:#e6f4ff; color:#1e90d6; display:grid; place-items:center; box-shadow: inset 0 1px 0 #d3e8fb; }
+    .social svg{ width:18px; height:18px; fill:currentColor }
+
+    .site-footer{ height: var(--footerH); display:flex; align-items:center; color: var(--muted); font-size: .92rem; border-top: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,0), #f7faff 100%); }
+    .foot-wrap{ width:min(1180px,92%); margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .foot-left{ font-weight:600; color:#64748b; }
+    .foot-right{ display:flex; gap:12px; }
+
+    /* Búho (fijo + guiño cada 3s) */
+    .owl-wrap{ width:92px; height:92px; }
+    .owl-wrap svg{ width:100%; height:100%; overflow:visible; }
+    .eye-lid{ transform-origin:center; }
+    .eye-lid.left{ animation: wink 3s infinite ease-in-out; }
+    .eye-lid.right{ animation: blink 9s infinite ease-in-out; }
+    @keyframes wink{ 0%, 96%, 100% { transform: scaleY(1); } 97%, 99% { transform: scaleY(0.05); } }
+    @keyframes blink{ 0%, 92%, 100% { transform: scaleY(1); } 93%, 95% { transform: scaleY(0.05); } }
+
+    /* Pantalla 1: Hero centrado */
+    .hero-fit{
+      height: calc(100dvh - var(--headerH) - var(--footerH));
+      display:grid; place-items:center; text-align:center;
+    }
+    .hero-block{ display:grid; gap:10px; place-items:center; }
+    .hero-block h1{ margin:6px 0 2px 0; font-weight:300; font-size: clamp(36px, 6vw, 64px); }
+    .hero-block p{ margin:0 0 6px 0; color:var(--muted); font-size: clamp(16px, 2.5vw, 20px); max-width:860px; }
+
+    .globe{ width:200px; height:200px; }
+    .spin{ animation: spin 10s linear infinite; transform-origin: 100px 100px; }
+    @keyframes spin{ to{ transform: rotate(360deg) } }
+
+    .search-wrap{ display:flex; align-items:center; width:min(880px, 100%); border-radius: 999px; background:#fff; border:2px solid var(--primary); box-shadow: 0 6px 16px rgba(32,166,224,.18), 0 0 0 8px #e3f6ff; overflow:hidden; }
+    .search-wrap input{ flex:1; padding:12px 16px; border:0; outline:0; font-size:16px; color:var(--text); }
+    .search-btn{ display:inline-flex; align-items:center; gap:10px; background: var(--primary); color:#fff; border:0; font-weight:800; padding:12px 18px; height:100%; }
+    .api-row{ width:min(880px, 100%); margin:6px auto 0; display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:center; }
+    .api-input{ flex:1; min-width:280px; display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 10px; }
+    .api-input input{ flex:1; border:0; outline:0; font-size:.95rem; color:var(--text); }
+    .btn-ghost{ border:1px solid var(--line); background:#fff; border-radius:10px; padding:6px 10px; }
+    .trust{ font-size:12px; color:#6f7a8a; margin-top:6px; max-width:880px; }
+
+    /* Pantalla 2: contenido ajustado a alto */
+    .content-fit{ height: calc(100dvh - var(--headerH) - var(--footerH)); padding-top:6px; display:flex; flex-direction:column; gap:12px; overflow:hidden; }
+    .toolbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .url-pill{ flex:1; display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:8px 12px; box-shadow: var(--shadow-card); }
+    .url-pill input{ flex:1; border:0; outline:0; font-size:.95rem; color:var(--text); }
+    .open-btn{ background:#0ea5e9; color:#fff; border:0; font-weight:800; padding:10px 12px; border-radius:999px; }
+    .home-top{ background:#e6f4ff; color:#1277b7; border:0; font-weight:800; padding:10px 12px; border-radius:999px; }
+
+    .top-row{ flex:1; display:grid; grid-template-columns: 1.1fr 1.4fr 1.1fr; gap:18px; min-height:0; }
+    .card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow: var(--shadow-card); padding:12px; overflow:hidden; }
+    .card-title{ color:#4b5563; font-weight:700; margin-bottom:8px; }
+    .card-h{ display:grid; grid-template-rows:auto 1fr; min-height: 300px; }
+
+    /* Placeholders animados (hasta que hay datos) */
+    .semi-scan svg{ width:100%; height:160px; }
+    .semi-scan .track{ stroke:#eef3f9; stroke-width:16; fill:none; }
+    .semi-scan .scan{ stroke: url(#gradSemi); stroke-width:16; fill:none; stroke-linecap:round; stroke-dasharray: 160; stroke-dashoffset: 160; animation: dash 2.2s ease-in-out infinite; }
+    .semi-scan .label{ text-align:center; color:#64748b; font-weight:700; margin-top:6px; }
+    @keyframes dash { 0%{ stroke-dashoffset: 160 } 50%{ stroke-dashoffset: 40 } 100%{ stroke-dashoffset: 160 } }
+
+    .radar-scan{ position:relative; overflow:hidden; display:grid; place-items:center; height:200px; border:1px dashed var(--line); border-radius:12px; }
+    .radar-scan .grid{ width:85%; height:auto; opacity:.9; }
+    .sweep2{ position:absolute; width:320px; height:320px; border-radius:50%; background: conic-gradient(from 0deg, rgba(14,165,233,.25), transparent 40deg); mask: radial-gradient(circle at center, transparent 46%, #000 47%); animation: spin2 3.2s linear infinite; }
+    @keyframes spin2 { to{ transform: rotate(360deg) } }
+
+    .rocket{ height:200px; display:grid; place-items:center; position:relative; overflow:hidden; background:#fff; border:1px dashed var(--line); border-radius:12px; }
+    .rocket svg{ width:76px; height:76px; }
+    .rocket .ship{ animation: fly 2.6s ease-in-out infinite; }
+    .rocket.paused .ship{ animation-play-state: paused; transform: translateX(0) translateY(0); }
+    @keyframes fly{ 0%{ transform: translateX(-120px) translateY(0); } 50%{ transform: translateX(0) translateY(-6px); } 100%{ transform: translateX(120px) translateY(0); } }
+    .progress-text{ text-align:center; margin:10px 0 8px; color:#475569; font-weight:800; }
+    .progress-bar{ height:10px; border-radius:999px; background:#eef3f9; overflow:hidden; border:1px solid var(--line); }
+    .progress-bar span{ display:block; height:100%; width:0%; background: linear-gradient(90deg, var(--primary), var(--primary-2)); transition: width .35s ease; }
+
+    .checklist{ margin-top:10px; display:grid; gap:6px; font-size:14px; }
+    .check{ display:flex; align-items:center; gap:8px; color:#64748b; font-weight:600; }
+    .check .dot{ width:8px; height:8px; border-radius:999px; background:#cbd5e1; }
+    .check.active .dot{ background:#0ea5e9; box-shadow:0 0 0 4px #e0f2fe; }
+    .check.done .dot{ background:#10b981; }
+
+    /* Mini resumen (fila inferior) */
+    .kpi-mini{ display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:14px; }
+    .kpi-card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; box-shadow: var(--shadow-card); display:grid; gap:8px; align-items:center; }
+    .kpi-title{ font-weight:700; color:#4b5563; text-align:center; }
+
+    .semi{ width:240px; margin: 0 auto; }
+    .semi svg{ display:block; width:100%; height:auto; }
+    .semi .track{ stroke:#eef3f9; stroke-width:16; fill:none; }
+    .semi .progress{ stroke: url(#gradSemi); stroke-width:16; fill:none; stroke-linecap:round; transition: stroke-dashoffset .45s ease; }
+    .semi .val{ font-weight:800; font-size: 26px; fill:#0f172a; }
+    .semi .cap{ font-weight:700; font-size: 12px; fill:#64748b; }
+
+    .status-circles{ display:flex; justify-content:space-evenly; align-items:center; gap:10px; }
+    .stat{ display:flex; align-items:center; gap:8px; color:#64748b; font-weight:700; }
+    .s-dot{ width:12px; height:12px; border-radius:999px; }
+    .ok{ background:#d1fae5 } .warn{ background:#fde68a } .err{ background:#fecaca }
+
+    .cta-card{ background: linear-gradient(135deg, #0ea5e9, #22c55e); color:#fff; display:grid; place-items:center; border:0; }
+    .cta-btn{ font-weight:900; letter-spacing:.2px; background: rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.35); border-radius:12px; padding:12px 16px; }
+    .cta-muted{ opacity:.9; font-weight:700 }
+
+    /* Pantalla 3 */
+    .content-fit-3{ height: calc(100dvh - var(--headerH) - var(--footerH)); overflow:hidden; display:flex; flex-direction:column; gap:10px; }
+    .kpi-grid-3{ display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:14px; }
+    .action-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+    .action{ border:1px solid var(--line); background:#fff; border-radius:10px; padding:8px 10px; font-weight:700; }
+
+    .areas-card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; box-shadow: var(--shadow-card); }
+    .areas-list{ display:grid; gap:8px; }
+    .area{ display:grid; grid-template-columns: 120px 1fr 40px; gap:10px; align-items:center; }
+    .area .name{ color:#64748b; font-weight:700; }
+    .bar{ height:12px; border-radius:999px; background:#eef3f9; position:relative; overflow:hidden; }
+    .bar > span{ position:absolute; inset:0; width:0%; background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981); transition: width .4s ease; border-radius:999px; }
+    .pct{ text-align:right; font-weight:800; color:#475569; }
+
+    .cards2{ display:grid; grid-template-columns: 1.2fr 1fr; gap:14px; }
+    .list{ display:grid; gap:8px; margin:0; padding:0; list-style:none; }
+    .li{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .li .text{ flex:1; }
+    .tag{ font-size:12px; font-weight:800; padding:2px 8px; border-radius:999px; }
+    .tag.crit{ background:#fee2e2; color:#b91c1c } .tag.warn{ background:#fef3c7; color:#a16207 }
+
+    dialog{ border:none; border-radius:14px; padding:12px; max-width:860px; width:92%; background:#fff; color:var(--text); box-shadow: var(--shadow-card); }
+    .modal-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px; }
+    .pre{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace; font-size:.9rem; color: var(--text); overflow:auto; max-height:60vh; white-space: pre-wrap; }
+
+    /* Gradiente gauges */
+    svg defs linearGradient#gradSemi stop{}
+
+    /* Responsive (móvil: permitir scroll) */
+    @media (max-width: 900px){
+      body{ overflow:auto; }
+      .screen{ grid-template-rows: auto 1fr auto; height:auto; }
+      .hero-fit{ height:auto; padding:16px 0; }
+      .content-fit, .content-fit-3{ height:auto; padding-bottom:12px; }
+      .top-row{ grid-template-columns: 1fr; }
+      .kpi-mini, .kpi-grid-3{ grid-template-columns: 1fr 1fr; }
+      .cards2{ grid-template-columns: 1fr; }
+      .nav-right{ flex-wrap:wrap; justify-content:flex-end; }
     }
 
-    /* ===============================
-       HEADER
-       =============================== */
-    header {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      gap: 10px;
-    }
-    .studio { justify-self: start; display: flex; align-items: center; gap: 10px; min-width: 0; }
-    .studio .name { font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    /* Radar neural (logo) */
-    .radar {
-      width: 40px; height: 40px; border-radius: 12px; position: relative; overflow: hidden;
-      display: grid; place-items: center; cursor: pointer;
-      background: radial-gradient(circle at 50% 55%, color-mix(in srgb, var(--accent2) 30%, transparent) 0%, transparent 60%), var(--surface);
-      border: 1px solid var(--border);
-      box-shadow: inset 0 0 18px color-mix(in srgb, var(--accent2) 20%, transparent);
-    }
-    .radar::before {
-      content: "";
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(circle at center, transparent 28%, rgba(255,255,255,.08) 29% 31%, transparent 32%),
-        radial-gradient(circle at center, transparent 48%, rgba(255,255,255,.08) 49% 51%, transparent 52%),
-        radial-gradient(circle at center, transparent 68%, rgba(255,255,255,.08) 69% 71%, transparent 72%),
-        linear-gradient(transparent 49%, rgba(255,255,255,.08) 50% 51%, transparent 52%),
-        linear-gradient(90deg, transparent 49%, rgba(255,255,255,.08) 50% 51%, transparent 52%);
-      pointer-events: none;
-    }
-    .sweep {
-      position: absolute; width: 220%; height: 220%; border-radius: 50%;
-      background: conic-gradient(from 0deg, color-mix(in srgb, var(--accent2) 50%, transparent) 0deg, transparent 40deg);
-      mask: radial-gradient(circle at center, transparent 38%, #000 39%);
-      animation: rotate 4s linear infinite;
-    }
-    [data-turbo="on"] .sweep { animation-duration: 1.6s; }
-    @keyframes rotate { to { transform: rotate(360deg); } }
-    .node { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); opacity: .75; }
-    .node.n1 { left: 12px; top: 9px; } .node.n2 { right: 8px; top: 14px; }
-    .node.n3 { left: 14px; bottom: 8px; } .node.n4 { right: 10px; bottom: 12px; }
-    .link { position: absolute; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); opacity: .6; transform-origin: left center; }
-    .link.l1 { left: 12px; top: 12px; width: 18px; transform: rotate(12deg); }
-    .link.l2 { left: 12px; bottom: 15px; width: 20px; transform: rotate(-10deg); }
-    .link.l3 { right: 8px; top: 16px; width: 18px; transform: rotate(140deg); }
-    .ping-dot {
-      position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); pointer-events: none; opacity: 0;
-      animation: ping 700ms ease-out forwards;
-    }
-    @keyframes ping { 0% { opacity: .9; transform: scale(.9); } 100% { opacity: 0; transform: scale(6); } }
-
-    .brand { justify-self: center; text-align: center; user-select: none; }
-    .brand h1 {
-      margin: 0;
-      font-family: var(--font-heading); font-weight: 800; letter-spacing: .4px; font-size: clamp(18px, 3vw, 26px);
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    }
-
-    .actions { justify-self: end; display: flex; gap: 8px; }
-    .icon-btn {
-      width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border);
-      background: var(--surface); color: var(--text); display: grid; place-items: center; cursor: pointer;
-      transition: transform .12s ease, background .2s;
-    }
-    .icon-btn:hover { transform: translateY(-2px); }
-
-    /* ===============================
-       HERO + SLOT DE IMAGEN INFERIOR
-       =============================== */
-    .hero {
-      display: grid; gap: 12px;
-      grid-template-rows: auto auto;
-      align-items: start; justify-items: center;
-      padding-top: 10px; /* todo más arriba */
-    }
-    .hero-copy { text-align: center; max-width: 760px; }
-    .hero-copy h2 { margin: 0 0 6px 0; font-family: var(--font-heading); font-size: clamp(28px, 6vw, 42px); line-height: 1.05; }
-    .hero-copy p { margin: 0; color: var(--muted); }
-
-    .cta {
-      display: grid; gap: 12px; width: min(760px, 100%);
-      background: linear-gradient(180deg, rgba(255,255,255,.02), transparent) padding-box,
-                  linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent2) 28%, transparent)) border-box;
-      border: 1px solid transparent; border-radius: var(--radius);
-      box-shadow: var(--shadow); padding: 14px;
-    }
-    .input { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; }
-    .input input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 1rem; }
-    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .btn { border: 0; cursor: pointer; font-weight: 700; border-radius: 12px; padding: 12px 16px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff;
-      box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 28%, transparent);
-      transition: transform .12s ease, filter .2s;
-    }
-    .btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
-    .btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: none; }
-    .tiny { font-size: .88rem; color: var(--muted); }
-    .examples button { padding: 6px 10px; }
-
-    /* Slot de imagen inferior (dejad vuestra ilustración aquí) */
-    .bg-slot {
-      height: var(--bg-slot-height);
-      background-image: var(--bg-image);
-      background-repeat: no-repeat;
-      background-position: center bottom;
-      background-size: contain;
-      opacity: .9;
-    }
-
-    /* ===============================
-       ANALYZING
-       =============================== */
-    .analyzing { display: none; place-items: center; text-align: center; min-height: 320px; }
-    .timeline { width: min(840px, 96%); background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px; box-shadow: var(--shadow); }
-    .steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-    .step { background: var(--elev); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: grid; gap: 6px; justify-items: center; }
-    .step .dot { width: 16px; height: 16px; border-radius: 50%; background: #7c8aa8; }
-    .step.active .dot { background: var(--accent2); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent2) 26%, transparent); }
-    .step.done .dot { background: var(--ok); }
-    .progress { height: 8px; border-radius: 999px; background: var(--elev); border: 1px solid var(--border); overflow: hidden; }
-    .progress span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .3s ease; }
-    .scan {
-      height: 140px; border-radius: 12px; border: 1px dashed var(--border); display: grid; place-items: center; color: var(--muted);
-      background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--accent) 10%, transparent) 12px, transparent 12px, transparent 24px);
-      animation: slidebg 1.2s linear infinite;
-    }
-    @keyframes slidebg { from { background-position: 0 0; } to { background-position: 24px 0; } }
-
-    /* ===============================
-       RESULTADOS
-       =============================== */
-    .results { display: none; gap: 16px; }
-    .summary {
-      position: sticky; top: 0; z-index: 1;
-      background: linear-gradient(180deg, rgba(255,255,255,.02), transparent) padding-box,
-                  linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent2) 28%, transparent)) border-box;
-      border: 1px solid transparent; border-radius: 16px; box-shadow: var(--shadow); padding: 12px; margin-bottom: 12px;
-    }
-    .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 12px; align-items: stretch; }
-    @media (max-width: 980px) { .summary-grid { grid-template-columns: 1fr; } }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
-
-    /* Gauge semicircular */
-    .gauge { --value: 0; --fill: hsl(180 80% 50%); display: grid; place-items: center; gap: 10px; }
-    .gauge .arc {
-      width: 220px; height: 110px; border-bottom-left-radius: 220px; border-bottom-right-radius: 220px;
-      background: conic-gradient(from -90deg, var(--fill) calc(var(--value)*1%), rgba(128,128,128,.22) 0);
-      -webkit-mask: radial-gradient(110px 110px at 50% 100%, transparent 64%, #000 65%);
-              mask: radial-gradient(110px 110px at 50% 100%, transparent 64%, #000 65%);
-    }
-    .gauge .label { font-weight: 800; font-size: 1.6rem; }
-    .chipset { display: flex; flex-wrap: wrap; gap: 8px; }
-    .chip { padding: 6px 10px; border-radius: 999px; background: var(--elev); border: 1px solid var(--border); font-weight: 700; font-size: .85rem; }
-    .chip.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
-    .chip.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
-    .chip.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, var(--border)); }
-
-    .llmbox { display: grid; grid-template-rows: auto 1fr auto; gap: 8px; min-height: 0; }
-    .pre {
-      background: var(--elev); border: 1px solid var(--border); border-radius: 12px; padding: 10px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
-      font-size: .9rem; color: var(--text); overflow: auto; max-height: 160px; white-space: pre-wrap;
-    }
-    .pre.error { border-left: 4px solid var(--bad); }
-
-    .details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
-    @media (max-width: 980px) { .details { grid-template-columns: 1fr; } }
-    .block h3 { margin: 0 0 8px 0; }
-    .kv { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: .9rem; color: var(--muted); }
-    .list { display: grid; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
-    .li { background: var(--elev); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
-
-    .radar-box { width: 100%; aspect-ratio: 1.4 / 1; background: var(--elev); border: 1px solid var(--border); border-radius: 12px; display: grid; place-items: center; }
-    .radar-box svg { width: 92%; height: auto; }
-
-    /* Footer */
-    footer { display: flex; justify-content: space-between; color: var(--muted); font-size: .9rem; padding: 10px 0 28px; }
-
-    .hidden { display: none !important; }
-
-    @media (prefers-reduced-motion: reduce) {
-      .icon-btn:hover, .btn:hover { transform: none !important; }
-      .sweep { animation: none; }
+    /* Print (solo la 3) */
+    @media print {
+      body { background:#fff; overflow: visible; }
+      .screen { display:none !important; }
+      #screen-results { display:grid !important; }
+      .nav-right .action, .open-btn, .blog-btn, .socials, .url-pill, .cta-card { display:none !important; }
+      .site-footer { border-top:none; }
+      .kpi-grid-3, .areas-card, .cards2 { break-inside: avoid; page-break-inside: avoid; }
     }
   </style>
 </head>
 
-<body data-theme="dark" data-palette="violet" data-font="inter" style="--bg-image: none;">
-  <div class="wrap">
-    <header>
-      <div class="studio">
-        <div id="radarLogo" class="radar" title="Radar neural · clic = ping · doble clic = turbo" aria-label="Logo Radar Neural">
-          <div class="sweep"></div>
-          <span class="node n1"></span><span class="node n2"></span><span class="node n3"></span><span class="node n4"></span>
-          <span class="link l1"></span><span class="link l2"></span><span class="link l3"></span>
-        </div>
-        <div class="name" id="studioName">[Nombre del estudio]</div>
-      </div>
+<body>
+  <!-- Gradiente global para semicírculos -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="gradSemi" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0%" stop-color="#ef4444"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#10b981"/>
+      </linearGradient>
+    </defs>
+  </svg>
 
+  <!-- ============ PANTALLA 1: LANDING ============ -->
+  <div id="screen-landing" class="screen">
+    <header class="container topbar">
       <div class="brand">
-        <h1>WebanAIyze</h1>
+        <div class="owl-wrap" title="Owl Studio">
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <defs>
+              <radialGradient id="feather" cx="50%" cy="35%"><stop offset="0%" stop-color="#eef6ff"/><stop offset="100%" stop-color="#d6eaff"/></radialGradient>
+              <linearGradient id="beak" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#32b3f1"/><stop offset="1" stop-color="#1e9edc"/></linearGradient>
+            </defs>
+            <ellipse cx="70" cy="86" rx="52" ry="44" fill="url(#feather)" stroke="#cfe7fb" stroke-width="2"/>
+            <ellipse cx="32" cy="84" rx="14" ry="22" fill="#e9f4ff" stroke="#cfe7fb"/>
+            <ellipse cx="108" cy="84" rx="14" ry="22" fill="#e9f4ff" stroke="#cfe7fb"/>
+            <path d="M30 42 Q52 18 70 34" fill="none" stroke="#1e9edc" stroke-width="5" stroke-linecap="round"/>
+            <path d="M110 42 Q88 18 70 34" fill="none" stroke="#1e9edc" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="52" cy="54" r="16" fill="#fff" stroke="#cfe7fb" stroke-width="2"/>
+            <circle cx="88" cy="54" r="16" fill="#fff" stroke="#cfe7fb" stroke-width="2"/>
+            <circle cx="52" cy="54" r="6" fill="#1e9edc"/>
+            <circle cx="88" cy="54" r="6" fill="#1e9edc"/>
+            <ellipse class="eye-lid left"  cx="52" cy="54" rx="16" ry="16" fill="rgba(255,255,255,0)"/>
+            <ellipse class="eye-lid right" cx="88" cy="54" rx="16" ry="16" fill="rgba(255,255,255,0)"/>
+            <polygon points="70,72 60,58 80,58" fill="url(#beak)"/>
+            <path d="M46 102 q24 14 48 0" fill="none" stroke="#cfe7fb" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-name">Owl Studio</div>
       </div>
-
-      <div class="actions">
-        <button class="icon-btn" id="themeToggle" title="Tema">🌓</button>
-        <button class="icon-btn" id="paletteBtn" title="Cambiar paleta">🎨</button>
-        <button class="icon-btn" id="fontBtn" title="Cambiar tipografía">🅰️</button>
-        <button class="icon-btn" id="guideBtn" title="Guía">📘</button>
+      <div class="nav-right">
+        <a class="link-home" id="home1" href="#">Inicio</a>
+        <a class="blog-btn" id="blogLink" href="#" target="_blank" rel="noopener">BLOG</a>
+        <div class="socials">
+          <a class="social" href="#" target="_blank" aria-label="Twitter/X" rel="noopener"><svg viewBox="0 0 24 24"><path d="M19.6 3H22l-6.5 7.4L23 21h-6.9l-5.4-6.5L4.5 21H2l7-7.9L1.4 3h7l4.9 5.9L19.6 3z"/></svg></a>
+          <a class="social" href="#" target="_blank" aria-label="Facebook" rel="noopener"><svg viewBox="0 0 24 24"><path d="M13 22v-9h3l1-4h-4V6.5c0-1.1.3-1.8 1.9-1.8H17V1.1C16.3 1 15.3 1 14.1 1 11.4 1 9.5 2.7 9.5 6v3H6v4h3.5v9H13z"/></svg></a>
+          <a class="social" href="#" target="_blank" aria-label="YouTube" rel="noopener"><svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .6 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.3.6 9.3.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .6-5.8 31 31 0 0 0-.6-5.8zM9.6 15.5V8.5l6 3.5-6 3.5z"/></svg></a>
+          <a class="social" href="#" target="_blank" aria-label="LinkedIn" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.1c.7-1.3 2.4-2.7 4.9-2.7 5.2 0 6.1 3.4 6.1 7.8V24H18v-7.2c0-1.7 0-3.9-2.4-3.9s-2.8 1.9-2.8 3.8V24H7.5V8z"/></svg></a>
+        </div>
       </div>
     </header>
 
-    <!-- HERO arriba; abajo queda el slot de imagen -->
-    <section class="hero" id="screen-landing">
-      <div class="hero-copy">
-        <h2>Analiza tu web sin rodeos</h2>
-        <p>Pega tu URL. Generamos puntuación SEO, revisión de seguridad y un llm.txt listo para agentes. Todo en una sola página.</p>
-      </div>
-
-      <div class="cta">
-        <div class="input">
-          <span>🌐</span>
-          <input type="url" id="url" placeholder="https://tusitio.com" autocomplete="url" required/>
+    <main class="container hero-fit">
+      <div class="hero-block">
+        <div class="globe" aria-hidden="true">
+          <svg viewBox="0 0 200 200">
+            <defs><radialGradient id="earth" cx="50%" cy="45%"><stop offset="0%" stop-color="#eaf6ff"/><stop offset="100%" stop-color="#cfe7fb"/></radialGradient></defs>
+            <circle cx="100" cy="100" r="84" fill="url(#earth)" stroke="#bfe0f8"/>
+            <g class="spin" stroke="#a8ccee" stroke-width="1.2" fill="none" opacity=".9">
+              <ellipse cx="100" cy="100" rx="70" ry="84"/><ellipse cx="100" cy="100" rx="40" ry="84"/><ellipse cx="100" cy="100" rx="10" ry="84"/>
+              <ellipse cx="100" cy="100" rx="84" ry="70"/><ellipse cx="100" cy="100" rx="84" ry="40"/><ellipse cx="100" cy="100" rx="84" ry="10"/>
+            </g>
+          </svg>
         </div>
-        <div class="row">
-          <div class="input" style="flex:1">
+
+        <h1>Analiza tu web sin límites</h1>
+        <p>SEO, vulnerabilidades y un llm.txt listo para bots. Todo en una sola página.</p>
+
+        <form class="search-wrap" id="heroForm">
+          <input id="urlInput" type="url" placeholder="INTRODUCE LA URL DE TU WEB" required/>
+          <button class="search-btn" id="analyzeBtn" type="submit" aria-label="Analizar">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 14 15.5l.27.28v.79L20 21.5 21.5 20l-6-6zM10 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>
+            Analizar
+          </button>
+        </form>
+
+        <div class="api-row">
+          <div class="api-input">
             <span>🔑</span>
-            <input type="password" id="apiKey" placeholder="Google AI API Key (si no pones una, verás el Modo Demo)" autocomplete="off"/>
+            <input id="apiKey" type="password" placeholder="Google AI API Key (p. ej., AIza...)" autocomplete="off" required/>
             <button type="button" id="toggleKey" class="btn-ghost">mostrar</button>
           </div>
-          <button class="btn" id="analyze">Analizar</button>
         </div>
-        <div class="tiny">Pulsa Enter para analizar. No guardamos tu clave.</div>
-        <div class="row examples tiny" style="margin-top:4px;">
-          Ejemplos:
-          <button class="btn-ghost" data-sample="https://www.cloudflare.com">cloudflare.com</button>
-          <button class="btn-ghost" data-sample="https://developer.mozilla.org">developer.mozilla.org</button>
-          <button class="btn-ghost" data-sample="https://www.nintendo.com">nintendo.com</button>
-        </div>
+        <div class="trust">Tu clave se usa solo en tu navegador para llamar a Google AI y no se almacena en nuestros servidores. Puedes revocarla cuando quieras desde tu cuenta de Google AI Studio.</div>
       </div>
-    </section>
+    </main>
 
-    <!-- Slot de imagen de fondo inferior -->
-    <div class="bg-slot" aria-hidden="true"></div>
-
-    <!-- Analizando -->
-    <section class="analyzing" id="screen-analyzing">
-      <div class="timeline">
-        <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <div class="tiny" id="analyzingMsg">Estamos trabajando en ello…</div>
-          <div class="progress" style="width:280px;"><span id="overallProgress"></span></div>
-        </div>
-
-        <div class="scan">Escaneando tu sitio…</div>
-
-        <div class="steps" style="margin-top:10px;">
-          <div class="step active" id="step-seo">
-            <div class="dot"></div>
-            <div><strong>SEO</strong></div>
-            <div class="tiny">Metas, headings, accesibilidad</div>
-          </div>
-          <div class="step" id="step-sec">
-            <div class="dot"></div>
-            <div><strong>Seguridad</strong></div>
-            <div class="tiny">SSL, headers, mixed content</div>
-          </div>
-          <div class="step" id="step-llm">
-            <div class="dot"></div>
-            <div><strong>LLM.txt</strong></div>
-            <div class="tiny">Guía para bots</div>
-          </div>
-        </div>
+    <footer class="site-footer">
+      <div class="foot-wrap">
+        <div class="foot-left">© 2025 WebanAIyze</div>
+        <div class="foot-right"><a href="#">Privacidad</a><a href="#">Términos</a></div>
       </div>
-    </section>
+    </footer>
+  </div>
 
-    <!-- Resultados -->
-    <section id="screen-results" class="results">
-      <div class="summary">
-        <div class="summary-grid">
-          <div class="card gauge" id="seoGauge">
-            <div class="arc" id="seoArc" style="--value:0;--fill:hsl(0 80% 50%);"></div>
-            <div class="label" id="seoLabel">0</div>
-            <div class="tiny" id="seoRank">Puntuación SEO</div>
-          </div>
-          <div class="card gauge" id="secGauge">
-            <div class="arc" id="secArc" style="--value:0;--fill:hsl(0 80% 50%);"></div>
-            <div class="label" id="secLabel">0</div>
-            <div class="tiny" id="secRank">Puntuación Seguridad</div>
-          </div>
-          <div class="card llmbox">
-            <div class="row" style="justify-content:space-between; align-items:center;">
-              <strong>LLM.txt</strong>
-              <div class="row" style="gap:6px;">
-                <button class="btn-ghost" id="copyLLM">Copiar</button>
-                <button class="btn-ghost" id="dlTxt">TXT</button>
-                <button class="btn-ghost" id="dlJson">JSON</button>
-              </div>
-            </div>
-            <pre class="pre" id="llmText">Sin datos.</pre>
-            <div class="chipset" id="quickChips"><span class="chip">Cargando…</span></div>
-          </div>
+  <!-- ============ PANTALLA 2: LOADING + mini-resumen ============ -->
+  <div id="screen-loading" class="screen" style="display:none;">
+    <header class="container topbar">
+      <div class="brand"><div class="brand-name" id="loadingTitle">Procesando…</div></div>
+      <div class="nav-right">
+        <div class="url-pill">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#e6f1fb"/><path d="M8 12h8M12 8v8" stroke="#1e9edc" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+          <input id="loadingUrl" type="text" readonly value="https://tusitio.com/"/>
         </div>
+        <button class="open-btn" id="openSite">Abrir sitio</button>
+        <a class="home-top" id="home2" href="#">Inicio</a>
       </div>
+    </header>
 
-      <div class="details">
-        <div class="block card">
-          <h3>SEO — detalles</h3>
-          <div class="kv" id="seoKV"></div>
-          <ul class="list" id="seoIssues"></ul>
-          <ul class="list" id="seoRecos"></ul>
-          <details style="margin-top:8px;">
-            <summary class="tiny">Respuesta en bruto</summary>
-            <pre class="pre" id="seoRaw">Sin datos.</pre>
-          </details>
-        </div>
-        <div class="block card">
-          <h3>Seguridad — detalles</h3>
-          <div class="kv" id="secKV"></div>
-          <ul class="list" id="secIssues"></ul>
-          <ul class="list" id="secRecos"></ul>
-          <details style="margin-top:8px;">
-            <summary class="tiny">Respuesta en bruto</summary>
-            <pre class="pre" id="secRaw">Sin datos.</pre>
-          </details>
+    <main class="container content-fit">
+      <!-- Fila superior -->
+      <div class="top-row">
+        <!-- SEO placeholder -> luego se reemplaza por gauge real -->
+        <div class="card card-h" id="topSeoCard">
+          <div class="card-title">Puntuación SEO</div>
+          <div class="semi-scan">
+            <svg viewBox="0 0 220 120">
+              <path class="track" d="M20 100 A 80 80 0 0 1 200 100"/>
+              <path class="scan"  d="M20 100 A 80 80 0 0 1 200 100" pathLength="160"/>
+            </svg>
+            <div class="label">Midiendo SEO…</div>
+          </div>
+          <div></div>
         </div>
 
-        <div class="block card" style="grid-column: 1 / -1;">
-          <h3>Radar de categorías</h3>
-          <div class="radar-box">
-            <svg viewBox="0 0 300 200">
-              <defs>
-                <radialGradient id="rfill" cx="50%" cy="50%">
-                  <stop offset="0%" stop-color="#6d5efc" stop-opacity=".16"/>
-                  <stop offset="100%" stop-color="#14d4ff" stop-opacity=".08"/>
-                </radialGradient>
-              </defs>
-              <g stroke="rgba(150,160,190,.35)" stroke-width="1">
+        <!-- Cohete progreso -->
+        <div class="card card-h">
+          <div class="rocket" id="rocketBox">
+            <svg viewBox="0 0 64 64" class="ship" id="shipAnim" aria-hidden="true">
+              <path d="M12 36 L4 40 L14 42 Z" fill="#fbbf24"/>
+              <path d="M18 18 C28 10, 44 10, 54 22 C46 30, 40 36, 24 44 C18 34, 18 26, 18 18 Z" fill="#e2e8f0" stroke="#94a3b8"/>
+              <circle cx="40" cy="26" r="6" fill="#1e9edc"/>
+            </svg>
+          </div>
+          <div class="progress-text" id="progressText">Analizando SEO…</div>
+          <div class="progress-bar"><span id="progressBar"></span></div>
+          <div class="checklist" id="checklist">
+            <div class="check active"><span class="dot"></span>Metas y títulos</div>
+            <div class="check"><span class="dot"></span>Headings y estructura</div>
+            <div class="check"><span class="dot"></span>Accesibilidad básica</div>
+            <div class="check"><span class="dot"></span>SSL y cabeceras</div>
+            <div class="check"><span class="dot"></span>Generando llm.txt</div>
+          </div>
+        </div>
+
+        <!-- Radar placeholder -> luego radar real -->
+        <div class="card card-h" id="topRadarCard">
+          <div class="card-title">Análisis de categorías SEO</div>
+          <div class="radar-scan">
+            <svg class="grid" viewBox="0 0 300 200">
+              <g stroke="#e5edf6" stroke-width="1">
                 <line x1="150" y1="170" x2="150" y2="30"/>
                 <line x1="150" y1="170" x2="40" y2="110"/>
                 <line x1="150" y1="170" x2="260" y2="110"/>
                 <line x1="150" y1="170" x2="90" y2="40"/>
                 <line x1="150" y1="170" x2="210" y2="40"/>
               </g>
-              <polygon id="radarPoly" points="150,170 150,170 150,170 150,170 150,170" fill="url(#rfill)" stroke="#6d5efc" stroke-opacity=".6"/>
-              <g font-size="12" fill="currentColor" opacity=".7">
-                <text x="146" y="24" text-anchor="middle">Base</text>
-                <text x="82" y="34" text-anchor="middle">Headings</text>
-                <text x="218" y="34" text-anchor="middle">Imágenes</text>
-                <text x="32" y="112" text-anchor="middle">Mobile</text>
-                <text x="268" y="112" text-anchor="middle">Metas</text>
-              </g>
             </svg>
+            <div class="sweep2"></div>
           </div>
-          <div class="tiny" style="margin-top:6px;">Radar generado a partir del JSON (heurístico: base/metas/headings/móvil/imágenes).</div>
+          <div></div>
         </div>
       </div>
-    </section>
 
-    <footer>
-      <div>© 2025 WebanAIyze — listo para GitHub Pages</div>
-      <div class="tiny">Atajos: Enter = Analizar</div>
+      <!-- Mini resumen: 4 tarjetas (la 4 es el CTA) -->
+      <div class="kpi-mini">
+        <div class="kpi-card">
+          <div class="kpi-title">SEO</div>
+          <div class="semi">
+            <svg viewBox="0 0 240 140">
+              <path class="track" d="M20 120 A 100 100 0 0 1 220 120"/>
+              <path class="progress" id="miniSeoPath" d="M20 120 A 100 100 0 0 1 220 120" stroke="url(#gradSemi)"/>
+              <text class="val" id="miniSeoVal" x="120" y="90" text-anchor="middle">0</text>
+              <text class="cap" id="miniSeoCap" x="120" y="112" text-anchor="middle">—</text>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Seguridad</div>
+          <div class="semi">
+            <svg viewBox="0 0 240 140">
+              <path class="track" d="M20 120 A 100 100 0 0 1 220 120"/>
+              <path class="progress" id="miniSecPath" d="M20 120 A 100 100 0 0 1 220 120" stroke="url(#gradSemi)"/>
+              <text class="val" id="miniSecVal" x="120" y="90" text-anchor="middle">0</text>
+              <text class="cap" id="miniSecCap" x="120" y="112" text-anchor="middle">—</text>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Estado rápido</div>
+          <div class="status-circles">
+            <div class="stat"><span class="s-dot ok"></span><span id="miniOk">0</span> Ok</div>
+            <div class="stat"><span class="s-dot warn"></span><span id="miniWarn">0</span> Avisos</div>
+            <div class="stat"><span class="s-dot err"></span><span id="miniErr">0</span> Errores</div>
+          </div>
+        </div>
+        <div class="kpi-card cta-card">
+          <div class="cta-muted">Tu informe está listo</div>
+          <button class="cta-btn" id="goResultsBtn" disabled>Ver informe ampliado →</button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="foot-wrap">
+        <div class="foot-left" id="footerStatus">Analizando con Gemini…</div>
+        <div class="foot-right"><span>SEO → Vulnerabilidades → LLM.txt</span></div>
+      </div>
     </footer>
   </div>
 
-  <!-- Guía -->
-  <dialog id="guide" style="border:none; border-radius:16px; padding:16px; width:min(680px,92%); background:var(--card); color:var(--text); box-shadow:var(--shadow)">
-    <h3 style="margin:0 0 8px 0;">Cómo funciona</h3>
-    <p class="tiny">100% front-end. Si no pones API Key, verás un Modo Demo para probar el flujo. Para leer HTML/headers reales hará falta un proxy en el futuro.</p>
-    <div style="display:flex; justify-content:flex-end; margin-top:8px;">
-      <button id="closeGuide" class="btn-ghost">Cerrar</button>
+  <!-- ============ PANTALLA 3: RESULTADOS (Resumen ampliado) ============ -->
+  <div id="screen-results" class="screen" style="display:none;">
+    <header class="container topbar">
+      <div class="brand"><div class="brand-name">Resumen del análisis</div></div>
+      <div class="nav-right">
+        <a class="link-home" id="home3" href="#">Inicio</a>
+        <button class="action" id="openLlm">Ver LLM.txt</button>
+        <button class="action" id="printBtn">Imprimir</button>
+        <button class="action" id="dlTxt">TXT</button>
+        <button class="action" id="dlJson" style="background:#0ea5e9;color:#fff;border:0;">JSON</button>
+      </div>
+    </header>
+
+    <main class="container content-fit-3">
+      <div class="kpi-grid-3">
+        <div class="kpi-card">
+          <div class="kpi-title">SEO</div>
+          <div class="semi">
+            <svg viewBox="0 0 240 140">
+              <path class="track" d="M20 120 A 100 100 0 0 1 220 120"/>
+              <path class="progress" id="seoSemiPath" d="M20 120 A 100 100 0 0 1 220 120" stroke="url(#gradSemi)"/>
+              <text class="val" id="seoVal" x="120" y="90" text-anchor="middle">0</text>
+              <text class="cap" id="seoCaption" x="120" y="112" text-anchor="middle">—</text>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Seguridad</div>
+          <div class="semi">
+            <svg viewBox="0 0 240 140">
+              <path class="track" d="M20 120 A 100 100 0 0 1 220 120"/>
+              <path class="progress" id="secSemiPath" d="M20 120 A 100 100 0 0 1 220 120" stroke="url(#gradSemi)"/>
+              <text class="val" id="secVal" x="120" y="90" text-anchor="middle">0</text>
+              <text class="cap" id="secCaption" x="120" y="112" text-anchor="middle">—</text>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Estado rápido</div>
+          <div class="status-circles">
+            <div class="stat"><span class="s-dot ok"></span><span id="numOk">0</span> Ok</div>
+            <div class="stat"><span class="s-dot warn"></span><span id="numWarn">0</span> Avisos</div>
+            <div class="stat"><span class="s-dot err"></span><span id="numErr">0</span> Errores</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Acciones</div>
+          <div class="action-row">
+            <button class="action" id="copyLlm">Copiar LLM.txt</button>
+            <button class="action" id="dlTxt2">TXT</button>
+            <button class="action" id="dlJson2">JSON</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="areas-card">
+        <div class="card-title" style="margin:0 0 6px 0;">Áreas SEO</div>
+        <div class="areas-list">
+          <div class="area"><div class="name">Base</div><div class="bar"><span id="barBase"></span></div><div class="pct" id="pctBase">0%</div></div>
+          <div class="area"><div class="name">Metas</div><div class="bar"><span id="barMetas"></span></div><div class="pct" id="pctMetas">0%</div></div>
+          <div class="area"><div class="name">Headings</div><div class="bar"><span id="barHeadings"></span></div><div class="pct" id="pctHeadings">0%</div></div>
+          <div class="area"><div class="name">Móvil</div><div class="bar"><span id="barMobile"></span></div><div class="pct" id="pctMobile">0%</div></div>
+          <div class="area"><div class="name">Imágenes</div><div class="bar"><span id="barImages"></span></div><div class="pct" id="pctImages">0%</div></div>
+        </div>
+      </div>
+
+      <div class="cards2">
+        <div class="card">
+          <div class="card-title">Problemas prioritarios</div>
+          <ul class="list" id="issueList"><li class="li"><span class="text">Sin datos.</span></li></ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Ganancias rápidas</div>
+          <ul class="list" id="winsList"><li class="li"><span class="text">Sin datos.</span></li></ul>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="foot-wrap">
+        <div class="foot-left">© 2025 WebanAIyze</div>
+        <div class="foot-right"><a href="#">Privacidad</a><a href="#">Términos</a></div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal LLM -->
+  <dialog id="llmDialog">
+    <div class="modal-head">
+      <strong>LLM.txt</strong>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-ghost" id="copyLlmDlg">Copiar</button>
+        <button class="btn-ghost" id="closeLlm">Cerrar</button>
+      </div>
     </div>
+    <pre class="pre" id="llmText">Sin datos.</pre>
   </dialog>
 
   <script>
     const $ = s => document.querySelector(s);
 
-    // Tema
-    const themeToggle = $('#themeToggle');
-    const savedTheme = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-    document.body.setAttribute('data-theme', savedTheme);
-    themeToggle?.addEventListener('click', () => {
-      const cur = document.body.getAttribute('data-theme');
-      const next = cur === 'light' ? 'dark' : 'light';
-      document.body.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
+    // Screens
+    const sLanding = $('#screen-landing'), sLoading = $('#screen-loading'), sResults = $('#screen-results');
+    // Home links
+    $('#home1')?.addEventListener('click', (e)=>{e.preventDefault(); showScreen('landing');});
+    $('#home2')?.addEventListener('click', (e)=>{e.preventDefault(); showScreen('landing');});
+    $('#home3')?.addEventListener('click', (e)=>{e.preventDefault(); showScreen('landing');});
+    function showScreen(name){
+      sLanding.style.display = (name==='landing')?'grid':'none';
+      sLoading.style.display = (name==='loading')?'grid':'none';
+      sResults.style.display = (name==='results')?'grid':'none';
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
 
-    // Paleta y Tipografías
-    const palettes = ['violet','sunset','mint','candy','mono'];
-    $('#paletteBtn')?.addEventListener('click', () => {
-      const cur = document.body.getAttribute('data-palette') || 'violet';
-      const idx = palettes.indexOf(cur);
-      const next = palettes[(idx + 1) % palettes.length];
-      document.body.setAttribute('data-palette', next);
-    });
-    const fonts = ['inter','sora','outfit'];
-    $('#fontBtn')?.addEventListener('click', () => {
-      const cur = document.body.getAttribute('data-font') || 'inter';
-      const idx = fonts.indexOf(cur);
-      const next = fonts[(idx + 1) % fonts.length];
-      document.body.setAttribute('data-font', next);
-    });
+    // Form landing
+    const heroForm = $('#heroForm'), urlInput = $('#urlInput'), apiKeyInput = $('#apiKey');
+    const toggleKey = $('#toggleKey'); toggleKey?.addEventListener('click', () => { const isPwd = apiKeyInput.type === 'password'; apiKeyInput.type = isPwd ? 'text' : 'password'; toggleKey.textContent = isPwd ? 'ocultar' : 'mostrar'; });
 
-    // Guía
-    const guide = $('#guide'); const guideBtn = $('#guideBtn'); const closeGuide = $('#closeGuide');
-    guideBtn?.addEventListener('click', () => guide.showModal());
-    closeGuide?.addEventListener('click', () => guide.close());
+    // Loading elements
+    const loadingUrl = $('#loadingUrl'), loadingTitle = $('#loadingTitle'), progressText = $('#progressText'), progressBar = $('#progressBar'), checks = document.querySelectorAll('#checklist .check');
+    const shipAnim = $('#shipAnim'), rocketBox = $('#rocketBox'), footerStatus = $('#footerStatus');
+    const openSiteBtn = $('#openSite');
 
-    // Radar neural: ping y turbo
-    const radarLogo = $('#radarLogo');
-    radarLogo?.addEventListener('click', e => {
-      const rect = radarLogo.getBoundingClientRect();
-      const x = e.clientX - rect.left, y = e.clientY - rect.top;
-      const dot = document.createElement('span');
-      dot.className = 'ping-dot';
-      dot.style.left = (x - 3) + 'px';
-      dot.style.top = (y - 3) + 'px';
-      radarLogo.appendChild(dot);
-      setTimeout(() => dot.remove(), 700);
-    });
-    radarLogo?.addEventListener('dblclick', () => {
-      const turbo = document.body.getAttribute('data-turbo') === 'on' ? 'off' : 'on';
-      document.body.setAttribute('data-turbo', turbo);
-    });
+    // Placeholders to replace after finish
+    const topSeoCard = $('#topSeoCard');
+    const topRadarCard = $('#topRadarCard');
 
-    // Elements
-    const screenLanding = $('#screen-landing');
-    const bgSlot = document.querySelector('.bg-slot');
-    const screenAnalyzing = $('#screen-analyzing');
-    const screenResults = $('#screen-results');
+    // Mini KPI elements
+    const miniSeoPath = $('#miniSeoPath'), miniSecPath = $('#miniSecPath');
+    const miniSeoVal = $('#miniSeoVal'), miniSeoCap = $('#miniSeoCap');
+    const miniSecVal = $('#miniSecVal'), miniSecCap = $('#miniSecCap');
+    const miniOk = $('#miniOk'), miniWarn = $('#miniWarn'), miniErr = $('#miniErr');
+    const goResultsBtn = $('#goResultsBtn');
 
-    const urlInput = $('#url');
-    const apiKey = $('#apiKey');
-    const toggleKey = $('#toggleKey');
-    const analyzeBtn = $('#analyze');
+    // Result KPI elements
+    const seoSemiPath = $('#seoSemiPath'), secSemiPath = $('#secSemiPath');
+    const seoVal = $('#seoVal'), seoCaption = $('#seoCaption'), secVal = $('#secVal'), secCaption = $('#secCaption');
 
-    const stepSEO = $('#step-seo'); const stepSEC = $('#step-sec'); const stepLLM = $('#step-llm');
-    const overallBar = $('#overallProgress');
-    const analyzingMsg = $('#analyzingMsg');
-
-    const seoArc = $('#seoArc'); const seoLabel = $('#seoLabel'); const seoRank = $('#seoRank');
-    const secArc = $('#secArc'); const secLabel = $('#secLabel'); const secRank = $('#secRank');
+    // Areas, issues, wins, llm (pantalla 3)
+    const barEls = {
+      Base: { bar: $('#barBase'), pct: $('#pctBase') },
+      Metas: { bar: $('#barMetas'), pct: $('#pctMetas') },
+      Headings: { bar: $('#barHeadings'), pct: $('#pctHeadings') },
+      Móvil: { bar: $('#barMobile'), pct: $('#pctMobile') },
+      Imágenes: { bar: $('#barImages'), pct: $('#pctImages') },
+    };
+    const issueList = $('#issueList'), winsList = $('#winsList');
     const llmText = $('#llmText');
-    const copyLLM = $('#copyLLM'); const dlTxt = $('#dlTxt'); const dlJson = $('#dlJson');
-    const quickChips = $('#quickChips');
+    const openLlm = $('#openLlm'), closeLlm = $('#closeLlm'), llmDialog = $('#llmDialog');
+    const copyLlm = $('#copyLlm'), copyLlmDlg = $('#copyLlmDlg');
+    const dlTxt = $('#dlTxt'), dlJson = $('#dlJson'), dlTxt2 = $('#dlTxt2'), dlJson2 = $('#dlJson2');
+    const printBtn = $('#printBtn');
 
-    const seoKV = $('#seoKV'); const seoIssues = $('#seoIssues'); const seoRecos = $('#seoRecos'); const seoRaw = $('#seoRaw');
-    const secKV = $('#secKV'); const secIssues = $('#secIssues'); const secRecos = $('#secRecos'); const secRaw = $('#secRaw');
-
-    // Toggle key
-    toggleKey?.addEventListener('click', () => {
-      const isPwd = apiKey.type === 'password';
-      apiKey.type = isPwd ? 'text' : 'password';
-      toggleKey.textContent = isPwd ? 'ocultar' : 'mostrar';
-    });
-
-    // Samples
-    document.querySelectorAll('[data-sample]').forEach(b => b.addEventListener('click', () => {
-      urlInput.value = b.getAttribute('data-sample');
-    }));
-
-    // Enter -> analizar
-    window.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && document.activeElement && ['INPUT','BUTTON'].includes(document.activeElement.tagName)) {
-        e.preventDefault(); analyzeBtn.click();
-      }
-    });
-
-    // Helpers
     function sanitizeUrl(u){ try{ return new URL(u).toString(); } catch { return null; } }
-    function setGauge(elArc, elLabel, value){
-      const v = Math.max(0, Math.min(100, Math.round(value||0)));
-      const hue = Math.round((v/100)*120);
-      elArc.style.setProperty('--value', v);
-      elArc.style.setProperty('--fill', `hsl(${hue} 80% 52%)`);
-      elLabel.textContent = v;
-    }
-    function setRank(el, score){
-      el.textContent = score >= 90 ? 'Excelente' :
-                       score >= 75 ? 'Muy bien' :
-                       score >= 60 ? 'Mejorable' : 'Necesita atención';
-    }
-    function chip(text, type=''){ const s=document.createElement('span'); s.className=`chip ${type}`; s.textContent=text; return s; }
-    function displayList(container, title, items){
-      container.innerHTML = '';
-      if (!items || !items.length) return;
-      const head=document.createElement('div'); head.textContent=title; head.style.fontWeight='800'; head.className='tiny';
-      container.appendChild(head);
-      items.forEach(t=>{ const li=document.createElement('li'); li.className='li'; li.textContent=t; container.appendChild(li); });
-    }
-    function kvSEO(container, d){
-      container.innerHTML=''; if (!d) return;
-      const lines=[];
-      if (d.titleTag) lines.push(`title: ${d.titleTag.present ? (d.titleTag.length ?? '—')+' chars' : 'no'}`);
-      if (d.metaDescription) lines.push(`meta: ${d.metaDescription.present ? (d.metaDescription.length ?? '—')+' chars' : 'no'}`);
-      if (d.headings) lines.push(`h1/h2/h3: ${d.headings.h1 ?? '?'} / ${d.headings.h2 ?? '?'} / ${d.headings.h3 ?? '?'}`);
-      if (d.mobile) lines.push(`móvil: ${d.mobile.status ?? 'unknown'}`);
-      if (d.images) lines.push(`img alt OK / faltan: ${d.images.withAlt ?? '?'} / ${d.images.withoutAlt ?? '?'}`);
-      const div=document.createElement('div'); div.className='kv'; div.textContent=lines.join(' | '); container.appendChild(div);
-    }
-    function kvSEC(container, d){
-      container.innerHTML=''; if (!d) return;
-      const lines=[];
-      if (d.ssl) lines.push(`SSL: ${d.ssl.valid === true ? 'válido' : d.ssl.valid === false ? 'NO' : 'unknown'}`);
-      if (d.mixedContent) lines.push(`mixed: ${d.mixedContent.found === true ? 'sí' : d.mixedContent.found === false ? 'no' : 'unknown'}`);
-      if (d.headers) {
-        const h=d.headers;
-        lines.push(`hdr: X-CTO ${h.xContentTypeOptions ?? '?'} | XFO ${h.xFrameOptions ?? '?'} | CSP ${h.contentSecurityPolicy ?? '?'} | Referrer ${h.referrerPolicy ?? '?'}`);
-      }
-      const div=document.createElement('div'); div.className='kv'; div.textContent=lines.join(' | '); container.appendChild(div);
-    }
-    function updateChips(seo, sec){
-      quickChips.innerHTML='';
-      if (!seo && !sec){ quickChips.append(chip('Sin datos')); return; }
-      if (seo){
-        const s=Math.round(seo.score ?? 0);
-        quickChips.append(chip(`SEO ${s}/100`, s>=80?'ok':s>=55?'warn':'bad'));
-        if (seo.titleTag?.present === false) quickChips.append(chip('Sin <title>','bad'));
-        if (seo.metaDescription?.present === false) quickChips.append(chip('Sin meta','warn'));
-        if ((seo.images?.withoutAlt ?? 0)>0) quickChips.append(chip('Imágenes sin alt','warn'));
-      }
-      if (sec){
-        const s=Math.round(sec.score ?? 0);
-        quickChips.append(chip(`Seguridad ${s}/100`, s>=80?'ok':s>=55?'warn':'bad'));
-        if (sec.headers?.contentSecurityPolicy === 'missing') quickChips.append(chip('Falta CSP','warn'));
-        if (sec.headers?.xFrameOptions === 'missing') quickChips.append(chip('Falta XFO','warn'));
-        if (sec.mixedContent?.found === true) quickChips.append(chip('Mixed content','bad'));
-      }
-    }
     const clamp = (n,min=0,max=100)=> Math.max(min, Math.min(max, Math.round(n || 0)));
-    function setRadar(seo){
-      const poly = document.getElementById('radarPoly');
-      if (!seo){ poly.setAttribute('points','150,170 150,170 150,170 150,170 150,170'); return; }
-      const base = ((seo.titleTag?.present?30:0) + (seo.metaDescription?.present?30:0) + (seo.headings?.h1===1?40:20));
-      const headings = clamp((seo.headings?.h1 === 1 ? 90 : 60) - ((seo.headings?.issues?.length || 0)*10), 0, 100);
-      const images = clamp(100 - (seo.images?.withoutAlt || 0)*25, 0, 100);
-      const mobile = seo.mobile?.status === 'ok' ? 90 : seo.mobile?.status === 'warning' ? 60 : seo.mobile?.status === 'poor' ? 30 : 50;
-      const metas = (seo.titleTag?.present ? 40 : 0) + (seo.metaDescription?.present ? 60 : 0);
-      const vals = [clamp(base), headings, images, mobile, metas];
-      const center = {x:150, y:170}, maxR=120, angs=[-90,-140,-40,180,0];
-      const pts = vals.map((v,i)=> {
-        const r = (v/100) * maxR * .85;
-        const a = (angs[i]*Math.PI)/180;
-        return `${center.x + r*Math.cos(a)},${center.y + r*Math.sin(a)}`;
-      }).join(' ');
-      poly.setAttribute('points', pts);
+
+    // Semicírculo helper
+    function setSemi(pathEl, value, labelEl, captionEl){
+      if (!pathEl) return;
+      const v = clamp(value);
+      const L = pathEl.getTotalLength();
+      pathEl.style.strokeDasharray = L.toFixed(2);
+      pathEl.style.strokeDashoffset = (L * (1 - v/100)).toFixed(2);
+      if (labelEl) labelEl.textContent = v;
+      if (captionEl) captionEl.textContent = v>=90?'Excelente':v>=75?'Muy bien':v>=60?'Mejorable':'Necesita atención';
     }
 
-    // Copy & downloads
-    copyLLM?.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(llmText.textContent || ''); } catch {}
-    });
-    function download(filename, content, type='text/plain'){
-      const blob = new Blob([content], {type});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click();
-      setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},0);
+    // Areas / classify / fixes / wins
+    function setArea(name, value){ const v = clamp(value); const el = barEls[name]; if (!el) return; el.bar.style.width = v + '%'; el.pct.textContent = v + '%'; }
+    function computeAreas(seo){
+      const base = ((seo?.titleTag?.present?40:0) + (seo?.metaDescription?.present?40:0) + (seo?.headings?.h1===1?20:10));
+      const metas = (seo?.titleTag?.present?50:0) + (seo?.metaDescription?.present?50:0);
+      const headings = clamp((seo?.headings?.h1===1 ? 85 : 55) - ((seo?.headings?.issues?.length || 0)*12));
+      const mobile = seo?.mobile?.status === 'ok' ? 90 : seo?.mobile?.status === 'warning' ? 60 : seo?.mobile?.status === 'poor' ? 35 : 50;
+      const images = clamp(100 - (seo?.images?.withoutAlt || 0)*25);
+      return { base: clamp(base), metas: clamp(metas), headings, mobile, images };
     }
-    dlTxt?.addEventListener('click', () => {
-      const report = `WebanAIyze — Informe
-=====================
-Sitio: ${urlInput.value || '—'}
-
---- SEO RAW ---
-${seoRaw.textContent}
-
---- Seguridad RAW ---
-${secRaw.textContent}
-
---- LLM.txt ---
-${llmText.textContent}
-`;
-      download(`webanAIyze-${new Date().toISOString().slice(0,10)}.txt`, report, 'text/plain');
-    });
-    dlJson?.addEventListener('click', () => {
-      const payload = {
-        website: urlInput.value || null,
-        generatedAt: new Date().toISOString(),
-        seo: window.__seo || null,
-        security: window.__sec || null,
-        llmTxt: llmText.textContent || null
-      };
-      download(`webanAIyze-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(payload, null, 2), 'application/json');
-    });
-
-    // API Google Generative Language
-    async function callGeminiAPI(prompt, key){
-      const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-      const body = { contents: [{ role:'user', parts:[{text: prompt}] }] };
-      const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key': key}, body: JSON.stringify(body) });
-      if (!res.ok) {
-        let msg = `Error ${res.status}`;
-        try { const j=await res.json(); if (j?.error?.message) msg=j.error.message; } catch {}
-        throw new Error(msg);
+    function classify(seo, sec){
+      const critical = [], warning = [], ok = [];
+      if (sec){
+        if (sec.ssl?.valid === false) critical.push('SSL no válido');
+        if (sec.mixedContent?.found === true) critical.push('Mixed content detectado');
+        const h = sec.headers || {};
+        if (h.contentSecurityPolicy === 'missing') critical.push('Falta Content-Security-Policy');
+        if (h.xFrameOptions === 'missing') warning.push('Falta X-Frame-Options');
+        if (h.xContentTypeOptions === 'missing') warning.push('Falta X-Content-Type-Options');
+        if (h.referrerPolicy === 'missing') warning.push('Falta Referrer-Policy');
+        (sec.libraries || []).filter(l=>l.status==='outdated').forEach(l=> warning.push(`Librería desactualizada: ${l.name} ${l.version}`));
       }
-      const data = await res.json();
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!text) throw new Error('Respuesta vacía');
-      return text.trim();
+      if (seo){
+        if (seo.titleTag?.present === false) warning.push('Sin <title>');
+        if (seo.metaDescription?.present === false) warning.push('Sin meta description');
+        if ((seo.images?.withoutAlt || 0) > 0) warning.push('Imágenes sin alt');
+        if ((seo.headings?.issues || []).includes('Multiple H1')) warning.push('Múltiples H1');
+        if (seo.mobile?.status === 'poor') critical.push('Experiencia móvil pobre');
+      }
+      if (sec?.ssl?.valid) ok.push('SSL válido');
+      if (sec?.mixedContent?.found === false) ok.push('Sin mixed content');
+      if (seo?.titleTag?.present) ok.push('<title> presente');
+      if (seo?.metaDescription?.present) ok.push('Meta description presente');
+      if (seo?.headings?.h1 === 1) ok.push('Un único H1');
+      return { critical, warning, ok };
+    }
+    function fixLink(text){
+      const map = [
+        ['SSL no válido', 'https://letsencrypt.org/es/docs/'], ['Mixed content', 'https://developer.mozilla.org/es/docs/Web/Security/Mixed_content'],
+        ['Content-Security-Policy', 'https://developer.mozilla.org/es/docs/Web/HTTP/CSP'], ['X-Frame-Options', 'https://developer.mozilla.org/es/docs/Web/HTTP/Headers/X-Frame-Options'],
+        ['X-Content-Type-Options', 'https://developer.mozilla.org/es/docs/Web/HTTP/Headers/X-Content-Type-Options'], ['Referrer-Policy', 'https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Referrer-Policy'],
+        ['<title>', 'https://developers.google.com/search/docs/appearance/title-link?hl=es'], ['meta description', 'https://developers.google.com/search/docs/appearance/snippet?hl=es'],
+        ['Imágenes sin alt', 'https://developer.mozilla.org/es/docs/Web/HTML/Element/img#el_atributo_alt'], ['Múltiples H1', 'https://web.dev/learn/html/headings-and-sections/'],
+        ['Experiencia móvil pobre', 'https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=es#mobile']
+      ];
+      for (const [k, url] of map) if (text.toLowerCase().includes(k.toLowerCase())) return url;
+      return 'https://www.google.com/search?q=' + encodeURIComponent('Cómo arreglar ' + text);
+    }
+    function buildWins(seo, sec){
+      const wins = [];
+      if (seo?.score >= 80) wins.push('Buen SEO general');
+      if (sec?.score >= 80) wins.push('Buena configuración de seguridad');
+      if (seo?.titleTag?.present) wins.push('Título optimizado');
+      if (seo?.metaDescription?.present) wins.push('Meta description definida');
+      if (sec?.ssl?.valid) wins.push('Certificado SSL válido');
+      if (sec?.headers?.referrerPolicy === 'present') wins.push('Referrer-Policy configurada');
+      return wins.slice(0,6);
+    }
+
+    // API Google
+    async function callGemini(prompt, key){
+      const model = 'gemini-2.5-flash-lite';
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+      const body = { contents: [{ role:'user', parts:[{ text: prompt }] }], generationConfig: { thinkingConfig: { thinkingBudget: 0 } } };
+      const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      if (!res.ok){ let msg = `Error ${res.status}`; try{ const j=await res.json(); if (j?.error?.message) msg=j.error.message; }catch{}; throw new Error(msg); }
+      const data = await res.json(); const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) throw new Error('Respuesta vacía del modelo'); return text.trim();
     }
     function tryParseJSON(str){
       if (!str) return null;
-      str = str.replace(/```json|```/g, '').trim();
+      str = str.replace(/```json|```/g,'').trim();
       try { return JSON.parse(str); } catch {}
       const a=str.indexOf('{'), b=str.lastIndexOf('}');
       if (a!==-1 && b!==-1 && b>a){ try { return JSON.parse(str.slice(a,b+1)); } catch {} }
       return null;
     }
 
-    // Prompts (JSON-first)
+    // Prompts
     function buildSeoPrompt(url){ return `Eres un auditor SEO. Analiza el sitio: ${url}.
 Devuelve SOLO un JSON válido (sin markdown). Si no puedes saber algo, usa null o "unknown".
 {
@@ -732,171 +697,189 @@ Estructura:
 [Pistas para bots/LLMs]
 `; }
 
-    // Micropausas para mostrar animaciones aunque la API responda rápido
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-    async function atLeast(promise, ms) {
-      const res = await Promise.race([Promise.all([promise, sleep(ms)]).then(([r]) => r)]);
-      return res;
+    // Timeline de carga
+    function step(label, pct, activeIndex){
+      progressText.textContent = label;
+      checks.forEach((c,i) => { c.classList.toggle('active', i === activeIndex); if (i < activeIndex) c.classList.add('done'); });
+      return new Promise(res => {
+        const start = parseInt(progressBar.style.width) || 0; const target = pct; const dur = 900; const t0 = performance.now();
+        function anim(t){ const k = Math.min(1,(t-t0)/dur); const cur = Math.round(start + (target-start)*k); progressBar.style.width = cur + '%'; if (k<1) requestAnimationFrame(anim); else setTimeout(res,250);}
+        requestAnimationFrame(anim);
+      });
     }
 
-    // Datos demo si no hay API Key
-    function demoData(site) {
-      const seed = (site?.length || 10) * 13 % 100;
-      const rnd = (min,max) => Math.round(min + (seed/100)*(max-min));
-      const seo = {
-        score: rnd(62, 88),
-        titleTag: { present: true, length: 56, value: "Demo Title | " + site, issues: [] },
-        metaDescription: { present: true, length: 154, value: "Demo meta description for "+site, issues: [] },
-        headings: { h1: 1, h2: 3, h3: 4, issues: [] },
-        mobile: { status: "warning", notes: "Viewport ok; tamaños de fuente mejorables" },
-        images: { withAlt: 12, withoutAlt: 2, issues: ["2 imágenes sin alt"] },
-        recommendations: [
-          "Añade datos estructurados básicos",
-          "Mejora el enlazado interno",
-          "Optimiza títulos H2 con intención de búsqueda"
-        ]
-      };
-      const sec = {
-        score: rnd(60, 86),
-        ssl: { valid: true, issues: [] },
-        mixedContent: { found: false, details: [] },
-        libraries: [{ name: "jQuery", version: "3.5.1", status: "outdated" }],
-        headers: { xContentTypeOptions: "present", xFrameOptions: "missing", contentSecurityPolicy: "missing", referrerPolicy: "present" },
-        recommendations: ["Define Content-Security-Policy", "Añade X-Frame-Options", "Revisa dependencias desactualizadas"]
-      };
-      const llm = `# LLM.txt for ${site}
-## Site Overview
-Demo: sitio de ejemplo para pruebas de interfaz.
+    // Render TOP ROW when done
+    function renderTopRow(seo){
+      // SEO gauge real
+      const val = clamp(seo?.score ?? 0);
+      topSeoCard.innerHTML = `
+        <div class="card-title">Puntuación SEO</div>
+        <div class="semi">
+          <svg viewBox="0 0 240 140">
+            <path class="track" d="M20 120 A 100 100 0 0 1 220 120"/>
+            <path class="progress" id="topSeoSemi" d="M20 120 A 100 100 0 0 1 220 120" stroke="url(#gradSemi)"/>
+            <text class="val" id="topSeoVal" x="120" y="90" text-anchor="middle">0</text>
+            <text class="cap" id="topSeoCap" x="120" y="112" text-anchor="middle">—</text>
+          </svg>
+        </div>`;
+      setSemi($('#topSeoSemi'), val, $('#topSeoVal'), $('#topSeoCap'));
 
-## Key Pages
-- ${site}/
-- ${site}/about
-- ${site}/blog
-
-## Content Structure
-Home con hero + secciones; blog con listados y detalle.
-
-## Important Information for AI
-Sitemap en /sitemap.xml · Favicon en /favicon.ico · Robots en /robots.txt
-`;
-      return { seo, sec, llm };
+      // Radar simple
+      const areas = computeAreas(seo);
+      const pts = radarPoints(areas);
+      topRadarCard.innerHTML = `
+        <div class="card-title">Análisis de categorías SEO</div>
+        <div style="height:200px; display:grid; place-items:center; border:1px solid var(--line); border-radius:12px;">
+          <svg viewBox="0 0 300 200" width="85%">
+            <g stroke="#e5edf6" stroke-width="1">
+              <line x1="150" y1="170" x2="150" y2="30"/>
+              <line x1="150" y1="170" x2="40" y2="110"/>
+              <line x1="150" y1="170" x2="260" y2="110"/>
+              <line x1="150" y1="170" x2="90" y2="40"/>
+              <line x1="150" y1="170" x2="210" y2="40"/>
+            </g>
+            <polygon points="${pts}" fill="#e7f2ff" stroke="#6d5efc" stroke-opacity=".6"/>
+          </svg>
+        </div>`;
+    }
+    function radarPoints(areas){
+      const center = {x:150, y:170}, maxR=120, angs=[-90,-140,-40,180,0];
+      const vals = [areas.base, areas.headings, areas.images, areas.mobile, areas.metas];
+      return vals.map((v,i)=> {
+        const r = (clamp(v)/100) * maxR * .85;
+        const a = (angs[i]*Math.PI)/180;
+        return `${center.x + r*Math.cos(a)},${center.y + r*Math.sin(a)}`;
+      }).join(' ');
     }
 
-    // Flujo principal
-    analyzeBtn?.addEventListener('click', async () => {
+    // Navegación
+    function goToResults(){ showScreen('results'); }
+    goResultsBtn?.addEventListener('click', goToResults);
+    openSiteBtn?.addEventListener('click', ()=> { const u = loadingUrl.value?.trim(); if (!u) return; window.open(u, '_blank', 'noopener'); });
+
+    // LLM / export / imprimir
+    // const llmDialog = $('#llmDialog');
+    $('#openLlm')?.addEventListener('click', ()=> llmDialog.showModal());
+    $('#closeLlm')?.addEventListener('click', ()=> llmDialog.close());
+    $('#copyLlm')?.addEventListener('click', async ()=> { try{ await navigator.clipboard.writeText(llmText.textContent || ''); }catch{} });
+    $('#copyLlmDlg')?.addEventListener('click', async ()=> { try{ await navigator.clipboard.writeText(llmText.textContent || ''); }catch{} });
+    function download(filename, content, type='text/plain'){ const blob = new Blob([content], {type}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},0); }
+    function doTxt(){ const r = window.__report || {}; const txt = `WebanAIyze — Informe
+=====================
+Sitio: ${r.website || '—'}
+Fecha: ${r.generatedAt || '—'}
+
+--- SEO (JSON) ---
+${JSON.stringify(r.seo || {}, null, 2)}
+
+--- Seguridad (JSON) ---
+${JSON.stringify(r.security || {}, null, 2)}
+
+--- LLM.txt ---
+${r.llmTxt || ''}`; download(`webanAIyze-${new Date().toISOString().slice(0,10)}.txt`, txt, 'text/plain'); }
+    function doJson(){ const r = window.__report || {}; download(`webanAIyze-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(r, null, 2), 'application/json'); }
+    $('#dlTxt')?.addEventListener('click', doTxt); $('#dlJson')?.addEventListener('click', doJson);
+    $('#dlTxt2')?.addEventListener('click', doTxt); $('#dlJson2')?.addEventListener('click', doJson);
+    $('#printBtn')?.addEventListener('click', ()=> window.print());
+
+    // Submit principal
+    heroForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
       const site = sanitizeUrl(urlInput.value.trim());
-      const key = apiKey.value.trim();
-      if (!site) { alert('Introduce una URL válida.'); return; }
+      const key = apiKeyInput.value.trim();
+      if (!site){ alert('Introduce una URL válida.'); return; }
+      if (!key){ alert('Introduce tu Google AI API Key.'); return; }
 
-      // Mostrar pantallas
-      screenLanding.classList.add('hidden');
-      bgSlot.classList.add('hidden');
-      screenResults.style.display = 'none';
-      screenAnalyzing.style.display = 'grid';
+      loadingUrl.value = site;
+      showScreen('loading');
+      shipAnim?.classList.add('ship');
 
-      let seoText='', secText='', llmTxt='';
-      let seoJSON=null, secJSON=null;
+      const pSEO = callGemini(buildSeoPrompt(site), key);
+      const pSEC = callGemini(buildSecPrompt(site), key);
+      const pLLM = callGemini(buildLlmPrompt(site), key);
 
-      overallBar.style.width = '10%';
-      analyzingMsg.textContent = key ? 'Analizando con Gemini…' : 'Modo Demo (sin API Key)';
+      let seoJSON=null, secJSON=null, llmTxt='';
 
-      if (!key) {
-        // DEMO (sin llamadas a API)
-        await sleep(300); stepSEC.classList.add('active');
-        const demo = demoData(site);
-        await sleep(900); stepSEO.classList.remove('active'); stepSEO.classList.add('done');
-        await sleep(600); stepSEC.classList.remove('active'); stepSEC.classList.add('done'); stepLLM.classList.add('active');
-        await sleep(600); stepLLM.classList.remove('active'); stepLLM.classList.add('done'); overallBar.style.width = '100%';
+      await step('Analizando SEO…', 25, 0);
+      try { const t = await pSEO; seoJSON = tryParseJSON(t); } catch(e){ console.error('SEO', e); }
 
-        seoJSON = demo.seo; secJSON = demo.sec; llmTxt = demo.llm;
-        seoText = JSON.stringify(demo.seo, null, 2);
-        secText = JSON.stringify(demo.sec, null, 2);
-      } else {
-        // Real API
-        try {
-          const pSEO = callGeminiAPI(buildSeoPrompt(site), key);
-          const pSEC = callGeminiAPI(buildSecPrompt(site), key);
-          const pLLM = callGeminiAPI(buildLlmPrompt(site), key);
+      await step('Buscando vulnerabilidades…', 70, 3);
+      try { const t = await pSEC; secJSON = tryParseJSON(t); } catch(e){ console.error('SEC', e); }
 
-          try {
-            seoText = await atLeast(pSEO, 1400);
-            seoJSON = tryParseJSON(seoText);
-            stepSEO.classList.remove('active'); stepSEO.classList.add('done');
-            stepSEC.classList.add('active'); overallBar.style.width = '40%';
-          } catch(e){ console.error('SEO error', e); stepSEO.classList.remove('active'); stepSEO.classList.add('done'); }
+      await step('Generando llm.txt…', 100, 4);
+      try { llmTxt = await pLLM; } catch(e){ console.error('LLM', e); }
 
-          try {
-            secText = await atLeast(pSEC, 1200);
-            secJSON = tryParseJSON(secText);
-            stepSEC.classList.remove('active'); stepSEC.classList.add('done');
-            stepLLM.classList.add('active'); overallBar.style.width = '70%';
-          } catch(e){ console.error('SEC error', e); stepSEC.classList.remove('active'); stepSEC.classList.add('done'); }
+      // Mini KPIs en pantalla 2
+      const sSEO = clamp(seoJSON?.score ?? 0), sSEC = clamp(secJSON?.score ?? 0);
+      setSemi(miniSeoPath, sSEO, miniSeoVal, miniSeoCap);
+      setSemi(miniSecPath, sSEC, miniSecVal, miniSecCap);
+      const status = classify(seoJSON, secJSON);
+      miniOk.textContent = status.ok.length; miniWarn.textContent = status.warning.length; miniErr.textContent = status.critical.length;
 
-          try {
-            llmTxt = await atLeast(pLLM, 900);
-            stepLLM.classList.remove('active'); stepLLM.classList.add('done'); overallBar.style.width = '100%';
-          } catch(e){ console.error('LLM error', e); stepLLM.classList.remove('active'); stepLLM.classList.add('done'); overallBar.style.width = '100%'; }
-        } catch (err) {
-          console.error('Proceso general falló', err);
-        }
-      }
+      // Guardar reporte
+      window.__report = { website: site, generatedAt: new Date().toISOString(), seo: seoJSON, security: secJSON, llmTxt };
 
-      // Render resultados
-      window.__seo = seoJSON || null; window.__sec = secJSON || null;
-      seoRaw.textContent = seoText || '—';
-      secRaw.textContent = secText || '—';
-      llmText.textContent = llmTxt || 'No se pudo generar el llm.txt';
+      // Finalizar loading (sin bucle)
+      progressBar.style.width = '100%';
+      progressText.textContent = 'Informe listo';
+      footerStatus.textContent = 'Análisis completado';
+      loadingTitle.textContent = 'Informe listo';
+      rocketBox?.classList.add('paused');
+      goResultsBtn.disabled = false;
 
-      if (seoJSON) {
-        setGauge(seoArc, seoLabel, seoJSON.score || 0);
-        setRank(seoRank, seoJSON.score || 0);
-        kvSEO(seoKV, seoJSON);
-        const issues = [
-          ...(seoJSON.titleTag?.issues || []),
-          ...(seoJSON.metaDescription?.issues || []),
-          ...(seoJSON.headings?.issues || []),
-          ...(seoJSON.images?.issues || []),
-        ];
-        displayList(seoIssues, 'Problemas', issues);
-        displayList(seoRecos, 'Recomendaciones', seoJSON.recommendations || []);
-      } else {
-        setGauge(seoArc, seoLabel, 0); setRank(seoRank, 0);
-      }
+      // Reemplazar placeholders superiores por visuales reales
+      renderTopRow(seoJSON);
 
-      if (secJSON) {
-        setGauge(secArc, secLabel, secJSON.score || 0);
-        setRank(secRank, secJSON.score || 0);
-        kvSEC(secKV, secJSON);
-        const probs = [
-          ...(secJSON.ssl?.issues || []),
-          ...(secJSON.mixedContent?.details || []),
-          ...(secJSON.libraries || []).filter(l => l.status==='outdated').map(l => `Librería desactualizada: ${l.name} ${l.version}`),
-        ];
-        const h = secJSON.headers || {};
-        if (h.xContentTypeOptions === 'missing') probs.push('Falta X-Content-Type-Options');
-        if (h.xFrameOptions === 'missing') probs.push('Falta X-Frame-Options');
-        if (h.contentSecurityPolicy === 'missing') probs.push('Falta Content-Security-Policy');
-        if (h.referrerPolicy === 'missing') probs.push('Falta Referrer-Policy');
-        displayList(secIssues, 'Problemas', probs);
-        displayList(secRecos, 'Recomendaciones', secJSON.recommendations || []);
-      } else {
-        setGauge(secArc, secLabel, 0); setRank(secRank, 0);
-      }
-
-      updateChips(window.__seo, window.__sec);
-      setRadar(window.__seo);
-
-      // Mostrar resultados
-      screenAnalyzing.style.display = 'none';
-      screenResults.style.display = 'grid';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      // Reset timeline para próximo análisis
-      setTimeout(() => {
-        stepSEO.className = 'step'; stepSEC.className = 'step'; stepLLM.className = 'step';
-        overallBar.style.width = '0%';
-      }, 300);
+      // Pre-render de resultados (pantalla 3)
+      renderResults();
     });
+
+    function renderResults(){
+      const r = window.__report || {};
+      const seo = r.seo || {}, sec = r.security || {};
+      const sSEO = clamp(seo?.score ?? 0), sSEC = clamp(sec?.score ?? 0);
+
+      // Semicírculos
+      setSemi(seoSemiPath, sSEO, seoVal, seoCaption);
+      setSemi(secSemiPath, sSEC, secVal, secCaption);
+
+      // Estado rápido
+      const status = classify(seo, sec);
+      $('#numOk').textContent = status.ok.length;
+      $('#numWarn').textContent = status.warning.length;
+      $('#numErr').textContent = status.critical.length;
+
+      // Áreas
+      const areas = computeAreas(seo);
+      setArea('Base', areas.base); setArea('Metas', areas.metas); setArea('Headings', areas.headings);
+      setArea('Móvil', areas.mobile); setArea('Imágenes', areas.images);
+
+      // Problemas
+      issueList.innerHTML = '';
+      const prioritized = [...status.critical.map(t=>({t, sev:'crit'})), ...status.warning.map(t=>({t, sev:'warn'}))].slice(0,6);
+      if (!prioritized.length) issueList.innerHTML = '<li class="li"><span class="text">Sin problemas relevantes detectados.</span></li>';
+      prioritized.forEach(it=>{
+        const li = document.createElement('li'); li.className='li';
+        const tag = document.createElement('span'); tag.className='tag ' + (it.sev==='crit'?'crit':'warn'); tag.textContent = it.sev==='crit'?'CRÍTICO':'AVISO';
+        const tx = document.createElement('span'); tx.className='text'; tx.textContent = ' ' + it.t;
+        const a = document.createElement('a'); a.className='fix'; a.href = fixLink(it.t); a.target='_blank'; a.rel='noopener'; a.textContent = 'Cómo arreglarlo →';
+        li.appendChild(tag); li.appendChild(tx); li.appendChild(a); issueList.appendChild(li);
+      });
+
+      // Wins
+      const wins = buildWins(seo, sec);
+      winsList.innerHTML = '';
+      if (!wins.length){ winsList.innerHTML = '<li class="li"><span class="text">Se mostrarán aquí las mejoras rápidas cuando las detectemos.</span></li>'; }
+      wins.slice(0,6).forEach(w => {
+        const li=document.createElement('li'); li.className='li';
+        const tag=document.createElement('span'); tag.className='tag ok'; tag.textContent='WIN';
+        const tx=document.createElement('span'); tx.className='text'; tx.textContent=' ' + w;
+        li.appendChild(tag); li.appendChild(tx); winsList.appendChild(li);
+      });
+
+      // LLM
+      llmText.textContent = r.llmTxt || 'No se pudo generar el llm.txt';
+    }
   </script>
 </body>
 </html>
