@@ -1,673 +1,939 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAnalIsys - Intelligent Website Analyzer</title>
-    <!-- Google Fonts for Modern Typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* ===== CSS Custom Properties (Variables) ===== */
-        :root {
-            /* Light Theme Colors */
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --accent-primary: #1a73e8;
-            --accent-secondary: #4285f4;
-            --border-color: #dee2e6;
-            --card-bg: #ffffff;
-            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            --button-hover: #0d6efd;
-            --error-color: #dc3545;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WebanAIyze — AI Website Analyzer</title>
 
-        /* Dark Theme Colors */
-        [data-theme="dark"] {
-            --bg-primary: #121212;
-            --bg-secondary: #1e1e1e;
-            --text-primary: #f5f5f5;
-            --text-secondary: #b0b0b0;
-            --accent-primary: #4285f4;
-            --accent-secondary: #8ab4f8;
-            --border-color: #333333;
-            --card-bg: #1e1e1e;
-            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            --button-hover: #5a95f5;
-            --error-color: #ea868f;
-        }
+  <!-- Fuente -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-        /* ===== Base Styles ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <style>
+    :root {
+      /* Base */
+      --bg: #ffffff;
+      --bg-elev: #f6f7f9;
+      --text: #0f172a;
+      --text-soft: #475569;
+      --border: #e2e8f0;
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+      /* Brand */
+      --accent: #7c3aed; /* violeta */
+      --accent-2: #06b6d4; /* cian */
+      --grad: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
 
-        a {
-            color: var(--accent-primary);
-            text-decoration: none;
-        }
+      /* Surfaces */
+      --card: #ffffff;
+      --shadow: 0 8px 30px rgba(2, 6, 23, 0.07);
 
-        a:hover {
-            text-decoration: underline;
-        }
+      /* State colors */
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
 
-        /* ===== Layout ===== */
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 0;
-        }
+      /* UI */
+      --radius: 14px;
+      --radius-sm: 10px;
+      --radius-lg: 18px;
+      --focus: 0 0 0 3px rgba(124, 58, 237, 0.25);
+    }
+    [data-theme="dark"] {
+      --bg: #0b0f1a;
+      --bg-elev: #0f1526;
+      --text: #ecf0ff;
+      --text-soft: #a6b0cf;
+      --border: #1c2541;
 
-        /* ===== Header & Theme Toggle ===== */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
+      --card: #0f1526;
+      --shadow: 0 10px 40px rgba(0,0,0,0.35);
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
+      --focus: 0 0 0 3px rgba(6, 182, 212, 0.25);
+    }
 
-        #theme-toggle {
-            background: none;
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s ease;
-        }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 10% -10%, rgba(124,58,237,.08), transparent 60%),
+                  radial-gradient(1200px 800px at 110% 10%, rgba(6,182,212,.08), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      transition: background .25s, color .25s;
+    }
 
-        #theme-toggle:hover {
-            background-color: var(--bg-secondary);
-        }
+    a { color: inherit; text-decoration: none; }
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
 
-        /* ===== Hero Section ===== */
-        #hero {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
+    header {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      margin-bottom: 24px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; letter-spacing: .2px; font-size: 1.1rem;
+      user-select: none;
+    }
+    .brand-badge {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: var(--grad);
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.25);
+    }
+    .brand span {
+      background: var(--grad);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-        #hero h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+    .actions { display: flex; align-items: center; gap: 10px; }
+    .btn-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--bg-elev); color: var(--text);
+      cursor: pointer; transition: transform .1s ease, background .2s ease, border-color .2s;
+    }
+    .btn-icon:hover { transform: translateY(-2px); }
+    .btn-icon:focus-visible { outline: none; box-shadow: var(--focus); }
 
-        #hero p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 1.5rem;
-        }
+    .hero {
+      display: grid; gap: 18px; text-align: center; margin: 14px 0 26px;
+    }
+    .hero h1 {
+      font-weight: 800; font-size: clamp(28px, 4vw, 44px); line-height: 1.08; margin: 0;
+      letter-spacing: -0.4px;
+      background: var(--grad);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p { color: var(--text-soft); max-width: 760px; margin: 0 auto; }
 
-        #how-it-works {
-            font-size: 0.9rem;
-            color: var(--accent-primary);
-            cursor: pointer;
-        }
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)) padding-box,
+                  linear-gradient(135deg, rgba(124,58,237,.3), rgba(6,182,212,.3)) border-box;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
 
-        /* ===== Form Section ===== */
-        #analyzer-form {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
-        }
+    .form-card {
+      display: grid; gap: 18px; padding: 22px;
+    }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+    .form-row { display: grid; gap: 10px; }
+    .label { font-size: .95rem; font-weight: 600; color: var(--text); }
+    .input {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg-elev); border: 1px solid var(--border);
+      padding: 12px 14px; border-radius: var(--radius-sm);
+      transition: border-color .2s, background .2s;
+    }
+    .input input {
+      border: 0; outline: 0; background: transparent; color: var(--text);
+      width: 100%; font-size: 0.98rem;
+    }
+    .input:focus-within { border-color: #9ca3af; box-shadow: var(--focus); }
+    .muted { color: var(--text-soft); font-size: .88rem; }
 
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
+    .row {
+      display: grid; grid-template-columns: 1fr; gap: 12px;
+    }
+    @media (min-width: 720px) {
+      .row-2 { grid-template-columns: 1.2fr 1fr; }
+      .row { grid-template-columns: 1fr 1fr; }
+      .btns { justify-content: space-between; }
+    }
 
-        input[type="url"],
-        input[type="password"] {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: border-color 0.2s ease;
-        }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      border: 0; cursor: pointer; user-select: none;
+      padding: 12px 16px; border-radius: var(--radius-sm);
+      font-weight: 600; transition: transform .1s ease, filter .2s ease, background .2s;
+    }
+    .btn-primary {
+      background: var(--grad); color: white;
+      box-shadow: 0 8px 24px rgba(124,58,237,.25);
+    }
+    .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.03); }
+    .btn-ghost {
+      background: var(--bg-elev); border: 1px solid var(--border); color: var(--text);
+    }
+    .btn-ghost:hover { transform: translateY(-2px); }
+    .btn-text { border: 0; background: transparent; color: var(--text-soft); }
 
-        input[type="url"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-        }
+    .tiny { font-size: .85rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border-radius: 999px; font-weight: 600; font-size: .85rem;
+      background: var(--bg-elev); border: 1px solid var(--border);
+    }
+    .chip.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
+    .chip.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
+    .chip.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, var(--border)); }
 
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: center;
-        }
+    .loading {
+      display: none; place-items: center; text-align: center; gap: 14px;
+      padding: 22px;
+    }
+    .spinner {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 4px solid rgba(0,0,0,.1);
+      border-left-color: var(--accent);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-        button {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            background-color: var(--accent-primary);
-            color: white;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-        }
+    .results { display: none; }
+    .results-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      margin: 8px 0 16px;
+    }
 
-        button:hover {
-            background-color: var(--button-hover);
-            transform: translateY(-2px);
-        }
+    .summary {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media (min-width: 840px) {
+      .summary { grid-template-columns: repeat(3, 1fr); }
+    }
 
-        button:active {
-            transform: translateY(0);
-        }
+    .score-card {
+      display: grid; gap: 10px; align-items: center; justify-items: center;
+      padding: 18px; border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow);
+    }
+    .score-title { font-weight: 700; color: var(--text-soft); font-size: .9rem; }
 
-        #privacy-note {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            flex: 1;
-            min-width: 200px;
-        }
+    .radial {
+      --size: 120px;
+      --value: 0; /* 0-100 */
+      --track: color-mix(in srgb, var(--text-soft) 10%, transparent);
+      --fill: var(--accent);
+      width: var(--size); height: var(--size); border-radius: 50%;
+      background:
+        radial-gradient(closest-side, var(--card) 78%, transparent 80% 100%),
+        conic-gradient(var(--fill) calc(var(--value)*1%), var(--track) 0);
+      position: relative;
+      filter: drop-shadow(0 10px 20px rgba(124,58,237,.18));
+    }
+    .radial::after {
+      content: attr(data-label);
+      position: absolute; inset: 0; display: grid; place-items: center;
+      font-weight: 800; font-size: 1.2rem;
+    }
 
-        /* ===== Loading Section ===== */
-        #loading {
-            display: none;
-            text-align: center;
-            padding: 2rem;
-        }
+    .grid {
+      display: grid; gap: 14px; margin-top: 8px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 900px) {
+      .grid { grid-template-columns: 1.1fr 1.1fr 1fr; }
+    }
 
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--accent-primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid; gap: 12px;
+      min-height: 150px;
+    }
+    .card h3 {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1.05rem; margin: 0; letter-spacing: .2px;
+    }
+    .section {
+      display: grid; gap: 8px;
+    }
+    .list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .li {
+      padding: 10px 12px; border-radius: 10px;
+      background: var(--bg-elev); border: 1px solid var(--border);
+      font-size: .95rem;
+    }
+    .kv { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: .9rem; }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+    .pre {
+      background: var(--bg-elev); border: 1px solid var(--border);
+      padding: 12px; border-radius: 10px; overflow: auto; max-height: 320px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .88rem; white-space: pre-wrap;
+    }
+    .pre.error { border-left: 4px solid var(--bad); color: color-mix(in srgb, var(--bad) 90%, var(--text)); }
 
-        /* ===== Results Section ===== */
-        #results {
-            display: none;
-        }
+    .footer-actions {
+      display: grid; gap: 10px; grid-template-columns: 1fr;
+      margin-top: 10px;
+    }
+    @media (min-width: 640px) {
+      .footer-actions { grid-template-columns: 1fr 1fr 1fr; }
+    }
 
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
+    footer {
+      margin-top: 28px; padding-top: 18px;
+      display: grid; gap: 8px; justify-items: center; text-align: center;
+      border-top: 1px solid var(--border); color: var(--text-soft); font-size: .92rem;
+    }
+    footer .links { display: flex; gap: 14px; flex-wrap: wrap; }
 
-        .results-header h2 {
-            font-size: 1.8rem;
-        }
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(2,6,23,0.55);
+      display: none; align-items: center; justify-content: center; padding: 20px;
+      z-index: 50;
+    }
+    .modal {
+      background: var(--card); color: var(--text); border-radius: var(--radius-lg);
+      width: min(680px, 92%); box-shadow: var(--shadow); padding: 18px;
+      display: grid; gap: 10px;
+    }
+    .modal .head { display: flex; align-items: center; justify-content: space-between; }
+    .modal .body { color: var(--text-soft); display: grid; gap: 10px; }
+    .modal .body ul { margin: 0 0 0 20px; }
+    .modal-open { display: flex; }
 
-        #back-button {
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        #back-button:hover {
-            background-color: var(--border-color);
-        }
-
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .analysis-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .analysis-card h3 {
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .analysis-card h3::before {
-            content: "🔍";
-            font-size: 1.2em;
-        }
-
-        .analysis-card:nth-child(2) h3::before {
-            content: "🛡️";
-        }
-
-        .analysis-card:nth-child(3) h3::before {
-            content: "📄";
-        }
-
-        .analysis-content {
-            flex-grow: 1;
-            white-space: pre-wrap; /* Preserves formatting for plain text */
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            background-color: var(--bg-secondary);
-            padding: 1rem;
-            border-radius: 6px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        /* Style for error messages within the content area */
-        .analysis-content.error {
-            color: var(--error-color);
-            border-left: 4px solid var(--error-color);
-            padding-left: 0.75rem;
-        }
-
-        #download-button {
-            display: block;
-            width: 100%;
-            padding: 1rem;
-            background-color: var(--accent-secondary);
-        }
-
-        #download-button:hover {
-            background-color: #5a95f5;
-        }
-
-        /* ===== Footer ===== */
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        footer a {
-            margin: 0 0.5rem;
-        }
-
-        /* ===== Responsive Design ===== */
-        @media (max-width: 600px) {
-            .container {
-                width: 95%;
-                padding: 1rem 0;
-            }
-
-            #hero h1 {
-                font-size: 2rem;
-            }
-
-            #analyzer-form {
-                padding: 1.5rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            #privacy-note {
-                text-align: center;
-            }
-        }
-    </style>
+    /* Toast */
+    .toast {
+      position: fixed; right: 20px; bottom: 20px; z-index: 60;
+      background: var(--card); border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 10px 12px; border-radius: 10px; box-shadow: var(--shadow);
+      display: none;
+    }
+    .toast.show { display: block; animation: fade 2.2s ease both; }
+    @keyframes fade {
+      0% { opacity: 0; transform: translateY(8px); }
+      12% { opacity: 1; transform: translateY(0); }
+      88% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(8px); }
+    }
+  </style>
 </head>
 <body data-theme="light">
-    <div class="container">
-        <header>
-            <div class="logo">WebAnalIsys</div>
-            <button id="theme-toggle" aria-label="Toggle dark mode">🌓</button>
-        </header>
+  <div class="container">
+    <header>
+      <div class="brand" aria-label="WebanAIyze">
+        <div class="brand-badge" aria-hidden="true"></div>
+        <div><span>WebanAIyze</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn-icon" id="how-btn" title="Cómo funciona" aria-label="Cómo funciona">❓</button>
+        <button class="btn-icon" id="theme-toggle" aria-label="Cambiar tema">🌓</button>
+      </div>
+    </header>
 
-        <main>
-            <section id="hero">
-                <h1>Unlock Your Website's Potential with AI</h1>
-                <p>Enter your website URL and your Google AI API Key to get an instant SEO analysis, security scan, and a generated <code>llm.txt</code> file.</p>
-                <div id="how-it-works">👉 How it works</div>
-            </section>
+    <main>
+      <section class="hero">
+        <h1>Analiza tu web con un toque de IA</h1>
+        <p>SEO, seguridad y un llm.txt listo para bots. Todo en una sola página, modo claro/oscuro y exportable. Perfecto para GitHub Pages y presupuestos indie.</p>
+      </section>
 
-            <form id="analyzer-form">
-                <div class="form-group">
-                    <label for="website-url">Website URL</label>
-                    <input type="url" id="website-url" placeholder="https://example.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="api-key">Google AI API Key</label>
-                    <input type="password" id="api-key" placeholder="AIzaSyB1234567890..." required>
-                </div>
-                <div class="button-group">
-                    <button id="analyze-button">🔍 Analyze My Website</button>
-                    <div id="privacy-note">Your API Key is used for this analysis only and is not stored.</div>
-                </div>
-            </form>
+      <section class="panel form-card" id="form-section">
+        <form id="analyzer-form" class="form">
+          <div class="form-row">
+            <label class="label" for="website-url">URL del sitio</label>
+            <div class="input">
+              <span>🌐</span>
+              <input type="url" id="website-url" placeholder="https://ejemplo.com" required />
+            </div>
+          </div>
 
-            <section id="loading">
-                <div class="spinner"></div>
-                <p>Analyzing your website with Gemini Flash. This may take a few moments...</p>
-            </section>
+          <div class="row">
+            <div class="form-row">
+              <label class="label" for="api-key">Google AI API Key</label>
+              <div class="input">
+                <span>🔑</span>
+                <input type="password" id="api-key" placeholder="AIza..." required />
+                <button type="button" class="btn-text tiny" id="toggle-key">mostrar</button>
+              </div>
+              <div class="muted tiny">La API Key solo se usa en tu navegador. No se guarda.</div>
+            </div>
 
-            <section id="results">
-                <div class="results-header">
-                    <h2>Analysis Report</h2>
-                    <button id="back-button">Analyze Another Site</button>
-                </div>
-                <div class="analysis-grid">
-                    <div class="analysis-card">
-                        <h3>SEO Analysis</h3>
-                        <pre class="analysis-content" id="seo-result">Results will appear here...</pre>
-                    </div>
-                    <div class="analysis-card">
-                        <h3>Security Scan</h3>
-                        <pre class="analysis-content" id="security-result">Results will appear here...</pre>
-                    </div>
-                    <div class="analysis-card">
-                        <h3>LLM.txt Content</h3>
-                        <pre class="analysis-content" id="llm-result">Results will appear here...</pre>
-                    </div>
-                </div>
-                <button id="download-button">📥 Download Full Report</button>
-            </section>
-        </main>
+            <div class="form-row">
+              <label class="label">Acciones</label>
+              <div class="btns" style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-primary" id="analyze-button">🔍 Analizar</button>
+                <button type="button" class="btn btn-ghost" id="reset-button">Limpiar</button>
+              </div>
+            </div>
+          </div>
+        </form>
 
-        <footer>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="https://github.com/your-username/webanalisis" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <p>&copy; 2025 WebAnalIsys. All rights reserved.</p>
-        </footer>
+        <div class="chips tiny">
+          <span class="chip">Ejemplos: </span>
+          <button class="chip btn-text" data-sample="https://www.cloudflare.com">cloudflare.com</button>
+          <button class="chip btn-text" data-sample="https://developer.mozilla.org">developer.mozilla.org</button>
+          <button class="chip btn-text" data-sample="https://www.nintendo.com">nintendo.com</button>
+        </div>
+      </section>
+
+      <section class="panel loading" id="loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <div>
+          <strong>Analizando con Gemini Flash…</strong>
+          <div class="muted tiny" aria-live="polite">Esto puede tardar unos segundos.</div>
+        </div>
+      </section>
+
+      <section class="results" id="results">
+        <div class="results-header">
+          <h2 style="margin:0;">Informe</h2>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-ghost" id="back-button">Analizar otra URL</button>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="score-card">
+            <div class="score-title">SEO</div>
+            <div class="radial" id="seo-score" data-label="0" style="--value:0"></div>
+          </div>
+          <div class="score-card">
+            <div class="score-title">Seguridad</div>
+            <div class="radial" id="sec-score" data-label="0" style="--value:0"></div>
+          </div>
+          <div class="card" style="align-content:start;">
+            <h3>Estado rápido</h3>
+            <div class="chips" id="quick-chips">
+              <span class="chip">Sin datos todavía</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>🔍 SEO: detalles</h3>
+            <div class="section">
+              <div class="kv" id="seo-kv"></div>
+              <div class="list" id="seo-issues"></div>
+              <div class="list" id="seo-recos"></div>
+            </div>
+            <details>
+              <summary class="tiny">Ver respuesta en bruto (fallback)</summary>
+              <pre class="pre" id="seo-raw">Sin contenido.</pre>
+            </details>
+          </div>
+
+          <div class="card">
+            <h3>🛡️ Seguridad: detalles</h3>
+            <div class="section">
+              <div class="kv" id="sec-kv"></div>
+              <div class="list" id="sec-issues"></div>
+              <div class="list" id="sec-recos"></div>
+            </div>
+            <details>
+              <summary class="tiny">Ver respuesta en bruto (fallback)</summary>
+              <pre class="pre" id="sec-raw">Sin contenido.</pre>
+            </details>
+          </div>
+
+          <div class="card">
+            <h3>📄 LLM.txt</h3>
+            <pre class="pre" id="llm-result">Esperando generación…</pre>
+            <div class="footer-actions">
+              <button class="btn btn-primary" id="copy-llm">Copiar llm.txt</button>
+              <button class="btn btn-ghost" id="download-txt">Descargar TXT</button>
+              <button class="btn btn-ghost" id="download-json">Descargar JSON</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="links">
+        <a href="#" class="muted">Privacidad</a>
+        <a href="#" class="muted">Términos</a>
+        <a href="https://github.com/your-username/webanalisyze" target="_blank" rel="noopener" class="muted">GitHub</a>
+      </div>
+      <div class="tiny">© 2025 WebanAIyze — hecho con café y algún que otro bug simpático.</div>
+    </footer>
+  </div>
+
+  <!-- Modal "Cómo funciona" -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="head">
+        <h3 id="modal-title" style="margin:0;">Cómo funciona</h3>
+        <button class="btn-icon" id="modal-close" aria-label="Cerrar">✖️</button>
+      </div>
+      <div class="body">
+        <p>Esto es 100% front-end. Tu API Key se usa solo en tu navegador. Sin backend, sin almacenamiento.</p>
+        <ul>
+          <li>Le pasamos a Gemini prompts específicos para SEO, seguridad y un llm.txt.</li>
+          <li>Pedimos respuesta en JSON para poder dibujar puntuaciones y listas.</li>
+          <li>Si el modelo devuelve texto raro, hacemos fallback y te lo mostramos tal cual.</li>
+          <li>Descargas disponibles: informe TXT, datos JSON y copia rápida del llm.txt.</li>
+        </ul>
+        <p class="tiny">Nota técnica: sin servidor no podemos leer HTML real ni headers por CORS. Esto es una guía rápida/heurística. Para auditorías serias, meted un proxy simple y ya jugamos en otra liga.</p>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // ===== Theme Toggle Logic =====
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeToggle = document.getElementById('theme-toggle');
-            const body = document.body;
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">Copiado al portapapeles</div>
 
-            // Check for saved theme in localStorage or respect OS preference
-            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            body.setAttribute('data-theme', savedTheme);
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const $ = (sel) => document.querySelector(sel);
 
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = body.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                body.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-            });
+      // Theme
+      const themeBtn = $('#theme-toggle');
+      const savedTheme = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.body.setAttribute('data-theme', savedTheme);
+      themeBtn.addEventListener('click', () => {
+        const cur = document.body.getAttribute('data-theme');
+        const next = cur === 'light' ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
 
-            // ===== Form and Analysis Logic =====
-            const form = document.getElementById('analyzer-form');
-            const loadingSection = document.getElementById('loading');
-            const resultsSection = document.getElementById('results');
-            const analyzeButton = document.getElementById('analyze-button');
-            const downloadButton = document.getElementById('download-button');
-            const backButton = document.getElementById('back-button');
+      // Modal
+      const modal = $('#modal');
+      $('#how-btn').addEventListener('click', () => modal.classList.add('modal-open'));
+      $('#modal-close').addEventListener('click', () => modal.classList.remove('modal-open'));
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('modal-open'); });
 
-            const websiteUrlInput = document.getElementById('website-url');
-            const apiKeyInput = document.getElementById('api-key');
+      // Toast
+      const toast = $('#toast');
+      function showToast(msg = 'Hecho') {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+      }
 
-            const seoResult = document.getElementById('seo-result');
-            const securityResult = document.getElementById('security-result');
-            const llmResult = document.getElementById('llm-result');
+      // Form refs
+      const form = $('#analyzer-form');
+      const urlInput = $('#website-url');
+      const keyInput = $('#api-key');
+      const toggleKeyBtn = $('#toggle-key');
+      const resetBtn = $('#reset-button');
+      const analyzeBtn = $('#analyze-button');
 
-            // Utility to display results or errors
-            function displayResult(element, content, isError = false) {
-                element.textContent = content;
-                if (isError) {
-                    element.classList.add('error');
-                } else {
-                    element.classList.remove('error');
-                }
-            }
+      const formSection = $('#form-section');
+      const loading = $('#loading');
+      const results = $('#results');
 
-            // Function to call the real Gemini API
-            async function callGeminiAPI(prompt, apiKey) {
-                const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+      // Results refs
+      const seoScoreEl = $('#seo-score');
+      const secScoreEl = $('#sec-score');
+      const chips = $('#quick-chips');
 
-                const requestBody = {
-                    contents: [{
-                        role: "user",
-                        parts: [{
-                            text: prompt
-                        }]
-                    }]
-                };
+      const seoKV = $('#seo-kv');
+      const seoIssues = $('#seo-issues');
+      const seoRecos = $('#seo-recos');
+      const seoRaw = $('#seo-raw');
 
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-goog-api-key': apiKey
-                        },
-                        body: JSON.stringify(requestBody)
-                    });
+      const secKV = $('#sec-kv');
+      const secIssues = $('#sec-issues');
+      const secRecos = $('#sec-recos');
+      const secRaw = $('#sec-raw');
 
-                    if (!response.ok) {
-                        let errorMessage = `API request failed with status ${response.status}.`;
-                        if (response.status === 400) {
-                            errorMessage = "Invalid API Key. Please check your Google AI API Key.";
-                        } else if (response.status === 403) {
-                            errorMessage = "API Key forbidden. Please check your Google AI API Key permissions.";
-                        } else if (response.status === 429) {
-                            errorMessage = "API Quota exceeded. Please try again later.";
-                        } else if (response.status >= 500) {
-                            errorMessage = "Google AI API server error. Please try again later.";
-                        } else {
-                            try {
-                                const errorData = await response.json();
-                                console.error("API Error Response:", errorData);
-                                errorMessage = `API Error (${response.status}): ${errorData.error?.message || 'Unknown error'}`;
-                            } catch (parseError) {
-                                // If JSON parsing fails, use text
-                                const errorText = await response.text();
-                                console.error("API Error Response (text):", errorText);
-                                errorMessage = `API Error (${response.status}): ${errorText.substring(0, 200)}...`;
-                            }
-                        }
-                        throw new Error(errorMessage);
-                    }
+      const llmResult = $('#llm-result');
 
-                    const data = await response.json();
-                    
-                    if (data.candidates && data.candidates.length > 0 && data.candidates[0].content) {
-                        return data.candidates[0].content.parts[0].text;
-                    } else if (data.promptFeedback) {
-                        console.error("Prompt feedback:", data.promptFeedback);
-                        throw new Error("The request was blocked due to safety concerns. Please try rephrasing.");
-                    } else {
-                        console.error("Unexpected API response structure:", data);
-                        throw new Error("Received an unexpected response from the API.");
-                    }
+      const backButton = $('#back-button');
+      const copyLLM = $('#copy-llm');
+      const downloadTxt = $('#download-txt');
+      const downloadJson = $('#download-json');
 
-                } catch (error) {
-                    console.error("Error in callGeminiAPI:", error);
-                    // Re-throw to be caught by the specific analysis handler
-                    throw error;
-                }
-            }
+      // Helpers
+      function setRadial(el, value, labelPrefix = '') {
+        const v = Math.max(0, Math.min(100, Math.round(value || 0)));
+        el.style.setProperty('--value', v);
+        const hue = Math.round((v / 100) * 120); // 0=red,120=green
+        const color = `hsl(${hue} 80% 50%)`;
+        el.style.setProperty('--fill', color);
+        el.setAttribute('data-label', `${labelPrefix}${v}`);
+      }
 
-            // Handle form submission
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
+      function sanitizeUrl(u) {
+        try { return new URL(u).toString(); } catch { return null; }
+      }
 
-                const websiteUrl = websiteUrlInput.value.trim();
-                const apiKey = apiKeyInput.value.trim();
+      function displayList(container, title, items, variant = 'li') {
+        container.innerHTML = '';
+        if (!items || !items.length) return;
+        const header = document.createElement('div');
+        header.className = 'tiny';
+        header.style.fontWeight = '700';
+        header.textContent = title;
+        container.appendChild(header);
+        items.forEach(t => {
+          const li = document.createElement('div');
+          li.className = variant;
+          li.textContent = t;
+          container.appendChild(li);
+        });
+      }
 
-                if (!websiteUrl || !apiKey) {
-                    alert("Please fill in all fields.");
-                    return;
-                }
+      function kvBlock(container, data) {
+        container.innerHTML = '';
+        if (!data) return;
+        const lines = [];
+        if (data.titleTag) lines.push(`title: ${data.titleTag.present ? (data.titleTag.length ?? 'longitud desconocida') + ' chars' : 'no encontrado'}`);
+        if (data.metaDescription) lines.push(`meta description: ${data.metaDescription.present ? (data.metaDescription.length ?? 'longitud desconocida') + ' chars' : 'no encontrada'}`);
+        if (data.headings) lines.push(`h1/h2/h3: ${data.headings.h1 ?? '?'} / ${data.headings.h2 ?? '?'} / ${data.headings.h3 ?? '?'}`);
+        if (data.mobile) lines.push(`móvil: ${data.mobile.status ?? 'desconocido'}`);
+        if (data.images && (data.images.withAlt != null || data.images.withoutAlt != null)) {
+          lines.push(`imágenes con alt / sin alt: ${data.images.withAlt ?? '?'} / ${data.images.withoutAlt ?? '?'}`);
+        }
+        if (lines.length) {
+          const pre = document.createElement('div');
+          pre.className = 'kv';
+          pre.textContent = lines.join(' | ');
+          container.appendChild(pre);
+        }
+      }
 
-                try {
-                    new URL(websiteUrl);
-                } catch (_) {
-                    alert("Please enter a valid website URL.");
-                    return;
-                }
+      function secKvBlock(container, data) {
+        container.innerHTML = '';
+        if (!data) return;
+        const lines = [];
+        if (data.ssl) lines.push(`SSL: ${data.ssl.valid === true ? 'válido' : data.ssl.valid === false ? 'NO válido' : 'desconocido'}`);
+        if (data.mixedContent) lines.push(`mixed content: ${data.mixedContent.found === true ? 'sí' : data.mixedContent.found === false ? 'no' : 'desconocido'}`);
+        if (data.headers) {
+          const h = data.headers;
+          lines.push(`headers: X-CTO ${h.xContentTypeOptions ?? '¿?'} | X-Frame-Options ${h.xFrameOptions ?? '¿?'} | CSP ${h.contentSecurityPolicy ?? '¿?'} | Referrer-Policy ${h.referrerPolicy ?? '¿?'}`);
+        }
+        if (lines.length) {
+          const pre = document.createElement('div');
+          pre.className = 'kv';
+          pre.textContent = lines.join(' | ');
+          container.appendChild(pre);
+        }
+      }
 
-                // Show loading, hide form
-                form.style.display = 'none';
-                loadingSection.style.display = 'block';
-                resultsSection.style.display = 'none';
-                
-                // Clear previous results and show "Analyzing..."
-                displayResult(seoResult, "Analyzing...");
-                displayResult(securityResult, "Analyzing...");
-                displayResult(llmResult, "Analyzing...");
+      function updateChips(seo, sec) {
+        chips.innerHTML = '';
+        if (!seo && !sec) { chips.innerHTML = '<span class="chip">Sin datos</span>'; return; }
+        const mk = (text, type = '') => {
+          const s = document.createElement('span');
+          s.className = `chip ${type}`;
+          s.textContent = text;
+          return s;
+        };
+        if (seo) {
+          const s = Math.round(seo.score ?? 0);
+          chips.append(mk(`SEO ${s}/100`, s >= 80 ? 'ok' : s >= 55 ? 'warn' : 'bad'));
+          if (seo.titleTag && seo.titleTag.present === false) chips.append(mk('Sin title', 'bad'));
+          if (seo.metaDescription && seo.metaDescription.present === false) chips.append(mk('Sin meta description', 'warn'));
+          if (seo.headings && (seo.headings.issues || []).includes('Multiple H1')) chips.append(mk('Múltiples H1', 'warn'));
+          if (seo.images && (seo.images.withoutAlt ?? 0) > 0) chips.append(mk('Imágenes sin alt', 'warn'));
+          if (seo.mobile && seo.mobile.status === 'poor') chips.append(mk('Móvil mejorable', 'bad'));
+        }
+        if (sec) {
+          const s = Math.round(sec.score ?? 0);
+          chips.append(mk(`Seguridad ${s}/100`, s >= 80 ? 'ok' : s >= 55 ? 'warn' : 'bad'));
+          if (sec.headers && (sec.headers.contentSecurityPolicy === 'missing' || sec.headers.contentSecurityPolicy === false)) chips.append(mk('Sin CSP', 'warn'));
+          if (sec.headers && (sec.headers.xFrameOptions === 'missing' || sec.headers.xFrameOptions === false)) chips.append(mk('Sin X-Frame-Options', 'warn'));
+          if (sec.mixedContent && sec.mixedContent.found === true) chips.append(mk('Mixed content', 'bad'));
+        }
+      }
 
-                // Define prompts
-                const seoPrompt = `Perform a basic SEO analysis on the website: ${websiteUrl}. Focus on the following:
-1.  Title Tag: Check if it exists and its length (aim for 50-60 characters).
-2.  Meta Description: Check if it exists and its length (aim for 150-160 characters).
-3.  Headings: Check the structure of H1, H2, H3 tags.
-4.  Mobile-Friendliness: Comment on responsiveness if possible.
-5.  Images: Check for the presence of alt text on images.
-Provide the results in a clear, structured format. No yapping.`;
+      function displayResult(element, content, isError = false) {
+        element.textContent = content;
+        element.classList.toggle('error', Boolean(isError));
+      }
 
-                const securityPrompt = `Perform a basic security scan on the website: ${websiteUrl}. Focus on the following:
-1.  SSL Certificate: Check if it's valid and trusted.
-2.  Mixed Content: Check if there are any insecure HTTP resources on an HTTPS page.
-3.  Outdated Libraries: Mention if any common JavaScript libraries seem outdated (you might need to make a simple GET request to the site to check this, or comment generally).
-4.  Security Headers: Check for the presence of common security headers like X-Content-Type-Options, X-Frame-Options, Content-Security-Policy.
-Provide the results in a clear, structured format. No yapping.`;
+      // Toggle API key visibility
+      toggleKeyBtn.addEventListener('click', () => {
+        const isPwd = keyInput.getAttribute('type') === 'password';
+        keyInput.setAttribute('type', isPwd ? 'text' : 'password');
+        toggleKeyBtn.textContent = isPwd ? 'ocultar' : 'mostrar';
+      });
 
-                const llmPrompt = `Generate a structured 'llm.txt' file in plain text format for the website: ${websiteUrl}.
-The purpose of llm.txt is to provide concise, organized, and clear information for large language models and AI agents.
-Structure your response like this:
-# LLM.txt for [Website URL]
-## Site Overview
-[Brief description of the site's purpose.]
-## Key Pages
-- [List of important pages/URLs]
-## Content Structure
-[How is the main content organized?]
-## Important Information for AI
-[Any specific information for AI agents.]
+      // Quick samples
+      document.querySelectorAll('[data-sample]').forEach(b => {
+        b.addEventListener('click', () => {
+          urlInput.value = b.getAttribute('data-sample');
+        });
+      });
 
-Content:`;
+      // Reset
+      resetBtn.addEventListener('click', () => {
+        form.reset();
+        toggleKeyBtn.textContent = 'mostrar';
+      });
 
-                try {
-                    // Start all API calls concurrently
-                    const seoPromise = callGeminiAPI(seoPrompt, apiKey);
-                    const securityPromise = callGeminiAPI(securityPrompt, apiKey);
-                    const llmPromise = callGeminiAPI(llmPrompt, apiKey);
+      // Back button
+      backButton.addEventListener('click', () => {
+        results.style.display = 'none';
+        formSection.style.display = 'grid';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
 
-                    // Handle each result/error individually as they resolve
-                    seoPromise.then(result => {
-                        displayResult(seoResult, result);
-                    }).catch(error => {
-                        displayResult(seoResult, `SEO Analysis failed: ${error.message}`, true);
-                    });
+      // Copy llm.txt
+      copyLLM.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(llmResult.textContent || '');
+          showToast('llm.txt copiado');
+        } catch {
+          showToast('No se pudo copiar');
+        }
+      });
 
-                    securityPromise.then(result => {
-                        displayResult(securityResult, result);
-                    }).catch(error => {
-                        displayResult(securityResult, `Security Scan failed: ${error.message}`, true);
-                    });
+      // Downloads
+      function download(filename, content, type = 'text/plain') {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          a.remove();
+        }, 0);
+      }
 
-                    llmPromise.then(result => {
-                        displayResult(llmResult, result);
-                    }).catch(error => {
-                        displayResult(llmResult, `LLM.txt generation failed: ${error.message}`, true);
-                    });
+      downloadTxt.addEventListener('click', () => {
+        const u = urlInput.value || 'desconocido';
+        const txt = `WebanAIyze — Informe
+======================
 
-                    // Wait for all to complete (either resolve or reject)
-                    await Promise.allSettled([seoPromise, securityPromise, llmPromise]);
+Sitio: ${u}
 
-                    // Show results, hide loading
-                    loadingSection.style.display = 'none';
-                    resultsSection.style.display = 'block';
+--- SEO ---
+${seoRaw.textContent}
 
-                } catch (error) {
-                    // This catch should ideally not be reached due to Promise.allSettled, but good for unexpected errors
-                    console.error("Overall analysis process failed:", error);
-                    loadingSection.style.display = 'none';
-                    form.style.display = 'block';
-                    alert(`Analysis failed: ${error.message || "An unknown error occurred. Please try again."}`);
-                }
-            });
-
-            // Handle download button
-            downloadButton.addEventListener('click', () => {
-                const fullReport = `WebAnalIsys Analysis Report
-=========================
-
-Website: ${websiteUrlInput.value}
-
---- SEO Analysis ---
-${seoResult.textContent}
-
---- Security Scan ---
-${securityResult.textContent}
+--- Seguridad ---
+${secRaw.textContent}
 
 --- LLM.txt ---
-${llmResult.textContent}`;
-                
-                const blob = new Blob([fullReport], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `webanalisis-analysis-${new Date().toISOString().slice(0, 10)}.txt`;
-                document.body.appendChild(a);
-                a.click();
-                
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }, 0);
-            });
+${llmResult.textContent}
+`;
+        const name = `webanAIyze-${new Date().toISOString().slice(0,10)}.txt`;
+        download(name, txt, 'text/plain');
+      });
 
-            // Handle back button
-            backButton.addEventListener('click', () => {
-                resultsSection.style.display = 'none';
-                form.style.display = 'block';
-            });
+      downloadJson.addEventListener('click', () => {
+        const payload = {
+          website: urlInput.value || null,
+          generatedAt: new Date().toISOString(),
+          seo: window.__seo || null,
+          security: window.__sec || null,
+          llmTxt: llmResult.textContent || null
+        };
+        const name = `webanAIyze-${new Date().toISOString().slice(0,10)}.json`;
+        download(name, JSON.stringify(payload, null, 2), 'application/json');
+      });
+
+      // Gemini
+      async function callGeminiAPI(prompt, apiKey) {
+        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+        const body = {
+          contents: [{ role: 'user', parts: [{ text: prompt }] }]
+        };
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify(body)
         });
-    </script>
+        if (!res.ok) {
+          let msg = `Error ${res.status}`;
+          try {
+            const j = await res.json();
+            if (j?.error?.message) msg = j.error.message;
+          } catch {}
+          throw new Error(msg);
+        }
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) throw new Error('Respuesta vacía del modelo');
+        return text.trim();
+      }
+
+      // Parse JSON with best effort
+      function tryParseJSON(str) {
+        if (!str) return null;
+        // Remove code fences
+        str = str.replace(/```json|```/g, '').trim();
+        // Try direct parse
+        try { return JSON.parse(str); } catch {}
+        // Try substring between first { and last }
+        const first = str.indexOf('{');
+        const last = str.lastIndexOf('}');
+        if (first !== -1 && last !== -1 && last > first) {
+          const sub = str.slice(first, last + 1);
+          try { return JSON.parse(sub); } catch {}
+        }
+        return null;
+      }
+
+      // Prompts (en español, JSON-only)
+      function buildSeoPrompt(url) {
+        return `Eres un auditor SEO. Analiza el sitio: ${url}.
+Devuelve SOLO un JSON válido, sin comentarios ni markdown. Si algún dato no es verificable, usa null o "unknown".
+Schema:
+{
+  "score": number,  // 0-100
+  "titleTag": { "present": boolean, "length": number|null, "value": string|null, "issues": string[] },
+  "metaDescription": { "present": boolean, "length": number|null, "value": string|null, "issues": string[] },
+  "headings": { "h1": number|null, "h2": number|null, "h3": number|null, "issues": string[] },
+  "mobile": { "status": "ok"|"warning"|"poor"|"unknown", "notes": string },
+  "images": { "withAlt": number|null, "withoutAlt": number|null, "issues": string[] },
+  "recommendations": string[]
+}`;
+      }
+
+      function buildSecPrompt(url) {
+        return `Eres un auditor de seguridad web. Analiza el sitio: ${url}.
+Devuelve SOLO un JSON válido, sin comentarios ni markdown. Si no puedes conocer algo, usa null o "unknown".
+Schema:
+{
+  "score": number, // 0-100
+  "ssl": { "valid": boolean|null, "issues": string[] },
+  "mixedContent": { "found": boolean|null, "details": string[] },
+  "libraries": [ { "name": string, "version": string, "status": "ok"|"outdated"|"unknown" } ],
+  "headers": {
+    "xContentTypeOptions": "present"|"missing"|"unknown",
+    "xFrameOptions": "present"|"missing"|"unknown",
+    "contentSecurityPolicy": "present"|"missing"|"unknown",
+    "referrerPolicy": "present"|"missing"|"unknown"
+  },
+  "recommendations": string[]
+}`;
+      }
+
+      function buildLlmPrompt(url) {
+        return `Genera un archivo 'llm.txt' en texto plano para el sitio: ${url}.
+Estructura estricta:
+# LLM.txt for [URL]
+## Site Overview
+[Breve descripción del propósito del sitio]
+## Key Pages
+- [Lista de páginas/URLs clave]
+## Content Structure
+[Resumen de cómo se organiza el contenido]
+## Important Information for AI
+[Pistas para agentes/LLMs: API docs, sitemaps, señales de estructura, actualizaciones]
+`;
+      }
+
+      // Submit
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const websiteUrl = sanitizeUrl(urlInput.value.trim());
+        const apiKey = keyInput.value.trim();
+
+        if (!websiteUrl || !apiKey) {
+          alert('Rellena URL y API Key.');
+          return;
+        }
+
+        // UI states
+        formSection.style.display = 'none';
+        loading.style.display = 'grid';
+        results.style.display = 'none';
+
+        // Reset prev
+        setRadial(seoScoreEl, 0, '');
+        setRadial(secScoreEl, 0, '');
+        chips.innerHTML = '<span class="chip">Calculando…</span>';
+        seoKV.innerHTML = secKV.innerHTML = '';
+        seoIssues.innerHTML = secIssues.innerHTML = '';
+        seoRecos.innerHTML = secRecos.innerHTML = '';
+        displayResult(seoRaw, 'Analizando…');
+        displayResult(secRaw, 'Analizando…');
+        displayResult(llmResult, 'Generando…');
+
+        const seoPrompt = buildSeoPrompt(websiteUrl);
+        const secPrompt = buildSecPrompt(websiteUrl);
+        const llmPrompt = buildLlmPrompt(websiteUrl);
+
+        let seoText = '', secText = '', llmText = '';
+        let seoJSON = null, secJSON = null;
+
+        try {
+          const pSEO = callGeminiAPI(seoPrompt, apiKey).then(t => { seoText = t; seoJSON = tryParseJSON(t); });
+          const pSEC = callGeminiAPI(secPrompt, apiKey).then(t => { secText = t; secJSON = tryParseJSON(t); });
+          const pLLM = callGeminiAPI(llmPrompt, apiKey).then(t => { llmText = t; });
+
+          await Promise.allSettled([pSEO, pSEC, pLLM]);
+        } catch (err) {
+          // no-op; manejamos debajo
+        }
+
+        // Render SEO
+        if (seoText) {
+          displayResult(seoRaw, seoText);
+        } else {
+          displayResult(seoRaw, 'No hubo respuesta de SEO', true);
+        }
+        if (seoJSON) {
+          window.__seo = seoJSON;
+          setRadial(seoScoreEl, seoJSON.score || 0, '');
+          kvBlock(seoKV, seoJSON);
+          const issues = [
+            ...(seoJSON.titleTag?.issues || []),
+            ...(seoJSON.metaDescription?.issues || []),
+            ...(seoJSON.headings?.issues || []),
+            ...(seoJSON.images?.issues || []),
+          ];
+          displayList(seoIssues, 'Problemas', issues);
+          displayList(seoRecos, 'Recomendaciones', seoJSON.recommendations || []);
+        } else {
+          window.__seo = null;
+        }
+
+        // Render Seguridad
+        if (secText) {
+          displayResult(secRaw, secText);
+        } else {
+          displayResult(secRaw, 'No hubo respuesta de Seguridad', true);
+        }
+        if (secJSON) {
+          window.__sec = secJSON;
+          setRadial(secScoreEl, secJSON.score || 0, '');
+          secKvBlock(secKV, secJSON);
+
+          const secIssuesArr = [
+            ...(secJSON.ssl?.issues || []),
+            ...(secJSON.mixedContent?.details || []),
+            ...(secJSON.libraries || []).filter(l => l.status === 'outdated').map(l => `Librería desactualizada: ${l.name} ${l.version}`),
+            ...(function() {
+              const hdr = secJSON.headers || {};
+              const miss = [];
+              if (hdr.xContentTypeOptions === 'missing') miss.push('Falta X-Content-Type-Options');
+              if (hdr.xFrameOptions === 'missing') miss.push('Falta X-Frame-Options');
+              if (hdr.contentSecurityPolicy === 'missing') miss.push('Falta Content-Security-Policy');
+              if (hdr.referrerPolicy === 'missing') miss.push('Falta Referrer-Policy');
+              return miss;
+            })()
+          ];
+          displayList(secIssues, 'Problemas', secIssuesArr);
+          displayList(secRecos, 'Recomendaciones', secJSON.recommendations || []);
+        } else {
+          window.__sec = null;
+        }
+
+        // Quick chips
+        updateChips(window.__seo, window.__sec);
+
+        // LLM txt
+        if (llmText) {
+          displayResult(llmResult, llmText);
+        } else {
+          displayResult(llmResult, 'No se pudo generar el llm.txt', true);
+        }
+
+        // Show results
+        loading.style.display = 'none';
+        results.style.display = 'block';
+        window.scrollTo({ top: results.offsetTop - 20, behavior: 'smooth' });
+      });
+    });
+  </script>
 </body>
 </html>
