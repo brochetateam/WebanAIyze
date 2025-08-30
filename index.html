@@ -3,795 +3,711 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>WebanAIyze — AI Website Analyzer</title>
+  <title>WebanAIyze — Analiza tu web con IA</title>
+  <meta name="color-scheme" content="light dark"/>
 
-  <!-- Fuente -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Tipografías -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sora:wght@400;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 
   <style>
+    /* ===============================
+       TOKENS + THEMES
+       =============================== */
     :root {
-      /* Base */
-      --bg: #ffffff;
-      --bg-elev: #f6f7f9;
-      --text: #0f172a;
-      --text-soft: #475569;
-      --border: #e2e8f0;
-
-      /* Brand */
-      --accent: #7c3aed; /* violeta */
-      --accent-2: #06b6d4; /* cian */
-      --grad: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-
-      /* Surfaces */
-      --card: #ffffff;
-      --shadow: 0 8px 30px rgba(2, 6, 23, 0.07);
-
-      /* State colors */
-      --ok: #10b981;
-      --warn: #f59e0b;
-      --bad: #ef4444;
-
-      /* UI */
-      --radius: 14px;
-      --radius-sm: 10px;
-      --radius-lg: 18px;
-      --focus: 0 0 0 3px rgba(124, 58, 237, 0.25);
-    }
-    [data-theme="dark"] {
       --bg: #0b0f1a;
-      --bg-elev: #0f1526;
+      --surface: #0f1526;
+      --elev: #131c31;
       --text: #ecf0ff;
-      --text-soft: #a6b0cf;
+      --muted: #9aa6c7;
       --border: #1c2541;
 
-      --card: #0f1526;
-      --shadow: 0 10px 40px rgba(0,0,0,0.35);
+      --accent: #6d5efc;
+      --accent2: #14d4ff;
 
-      --focus: 0 0 0 3px rgba(6, 182, 212, 0.25);
+      --ok:#10b981; --warn:#f59e0b; --bad:#ef4444;
+
+      --card:#0f1526;
+      --radius:16px;
+      --shadow: 0 12px 36px rgba(0,0,0,.35);
+
+      --font-body: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      --font-heading: var(--font-body);
+
+      /* Imagen de fondo inferior (slot) */
+      --bg-image: none; /* ejemplo: url('assets/ilustracion.svg') */
+      --bg-slot-height: 28dvh; /* altura de la zona de imagen */
+    }
+    [data-theme="light"] {
+      --bg:#f7f9ff; --surface:#ffffff; --elev:#f1f5ff; --text:#0f172a; --muted:#4b5563; --border:#e5e7eb; --card:#ffffff;
+      --shadow:0 10px 30px rgba(2,6,23,.08);
     }
 
+    /* Paletas */
+    [data-palette="violet"] { --accent:#6d5efc; --accent2:#14d4ff; }
+    [data-palette="sunset"] { --accent:#f97316; --accent2:#ef4444; }
+    [data-palette="mint"] { --accent:#10b981; --accent2:#14b8a6; }
+    [data-palette="candy"] { --accent:#a855f7; --accent2:#f43f5e; }
+    [data-palette="mono"] { --accent:#64748b; --accent2:#94a3b8; }
+
+    /* Tipografías */
+    [data-font="inter"]  { --font-body: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; --font-heading: var(--font-body); }
+    [data-font="sora"]   { --font-body: Sora, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; --font-heading: var(--font-body); }
+    [data-font="outfit"] { --font-body: Outfit, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; --font-heading: var(--font-body); }
+
+    /* ===============================
+       BASE
+       =============================== */
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       margin: 0;
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 10% -10%, rgba(124,58,237,.08), transparent 60%),
-                  radial-gradient(1200px 800px at 110% 10%, rgba(6,182,212,.08), transparent 60%),
-                  var(--bg);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(1200px 800px at 10% -10%, color-mix(in srgb, var(--accent) 30%, transparent) 0%, transparent 60%),
+        radial-gradient(1200px 800px at 110% 10%, color-mix(in srgb, var(--accent2) 26%, transparent) 0%, transparent 60%),
+        var(--bg);
       color: var(--text);
-      line-height: 1.55;
-      transition: background .25s, color .25s;
+      line-height: 1.5;
     }
-
     a { color: inherit; text-decoration: none; }
-    .container {
-      width: min(1100px, 92%);
+    button { font-family: inherit; }
+
+    .wrap {
+      width: min(1200px, 94%);
       margin: 0 auto;
-      padding: 28px 0 48px;
+      display: grid;
+      grid-template-rows: 72px auto auto auto;
+      gap: 16px;
     }
 
+    /* ===============================
+       HEADER
+       =============================== */
     header {
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
     }
-    .brand {
-      display: flex; align-items: center; gap: 10px;
-      font-weight: 800; letter-spacing: .2px; font-size: 1.1rem;
-      user-select: none;
+    .studio { justify-self: start; display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .studio .name { font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Radar neural (logo) */
+    .radar {
+      width: 40px; height: 40px; border-radius: 12px; position: relative; overflow: hidden;
+      display: grid; place-items: center; cursor: pointer;
+      background: radial-gradient(circle at 50% 55%, color-mix(in srgb, var(--accent2) 30%, transparent) 0%, transparent 60%), var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: inset 0 0 18px color-mix(in srgb, var(--accent2) 20%, transparent);
     }
-    .brand-badge {
-      width: 34px; height: 34px; border-radius: 10px;
-      background: var(--grad);
-      box-shadow: inset 0 0 10px rgba(255,255,255,0.25);
+    .radar::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at center, transparent 28%, rgba(255,255,255,.08) 29% 31%, transparent 32%),
+        radial-gradient(circle at center, transparent 48%, rgba(255,255,255,.08) 49% 51%, transparent 52%),
+        radial-gradient(circle at center, transparent 68%, rgba(255,255,255,.08) 69% 71%, transparent 72%),
+        linear-gradient(transparent 49%, rgba(255,255,255,.08) 50% 51%, transparent 52%),
+        linear-gradient(90deg, transparent 49%, rgba(255,255,255,.08) 50% 51%, transparent 52%);
+      pointer-events: none;
     }
-    .brand span {
-      background: var(--grad);
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .sweep {
+      position: absolute; width: 220%; height: 220%; border-radius: 50%;
+      background: conic-gradient(from 0deg, color-mix(in srgb, var(--accent2) 50%, transparent) 0deg, transparent 40deg);
+      mask: radial-gradient(circle at center, transparent 38%, #000 39%);
+      animation: rotate 4s linear infinite;
+    }
+    [data-turbo="on"] .sweep { animation-duration: 1.6s; }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    .node { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); opacity: .75; }
+    .node.n1 { left: 12px; top: 9px; } .node.n2 { right: 8px; top: 14px; }
+    .node.n3 { left: 14px; bottom: 8px; } .node.n4 { right: 10px; bottom: 12px; }
+    .link { position: absolute; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); opacity: .6; transform-origin: left center; }
+    .link.l1 { left: 12px; top: 12px; width: 18px; transform: rotate(12deg); }
+    .link.l2 { left: 12px; bottom: 15px; width: 20px; transform: rotate(-10deg); }
+    .link.l3 { right: 8px; top: 16px; width: 18px; transform: rotate(140deg); }
+    .ping-dot {
+      position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); pointer-events: none; opacity: 0;
+      animation: ping 700ms ease-out forwards;
+    }
+    @keyframes ping { 0% { opacity: .9; transform: scale(.9); } 100% { opacity: 0; transform: scale(6); } }
+
+    .brand { justify-self: center; text-align: center; user-select: none; }
+    .brand h1 {
+      margin: 0;
+      font-family: var(--font-heading); font-weight: 800; letter-spacing: .4px; font-size: clamp(18px, 3vw, 26px);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     }
 
-    .actions { display: flex; align-items: center; gap: 10px; }
-    .btn-icon {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 40px; height: 40px; border-radius: 10px;
-      border: 1px solid var(--border); background: var(--bg-elev); color: var(--text);
-      cursor: pointer; transition: transform .1s ease, background .2s ease, border-color .2s;
+    .actions { justify-self: end; display: flex; gap: 8px; }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text); display: grid; place-items: center; cursor: pointer;
+      transition: transform .12s ease, background .2s;
     }
-    .btn-icon:hover { transform: translateY(-2px); }
-    .btn-icon:focus-visible { outline: none; box-shadow: var(--focus); }
+    .icon-btn:hover { transform: translateY(-2px); }
 
+    /* ===============================
+       HERO + SLOT DE IMAGEN INFERIOR
+       =============================== */
     .hero {
-      display: grid; gap: 18px; text-align: center; margin: 14px 0 26px;
+      display: grid; gap: 12px;
+      grid-template-rows: auto auto;
+      align-items: start; justify-items: center;
+      padding-top: 10px; /* todo más arriba */
     }
-    .hero h1 {
-      font-weight: 800; font-size: clamp(28px, 4vw, 44px); line-height: 1.08; margin: 0;
-      letter-spacing: -0.4px;
-      background: var(--grad);
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .hero p { color: var(--text-soft); max-width: 760px; margin: 0 auto; }
+    .hero-copy { text-align: center; max-width: 760px; }
+    .hero-copy h2 { margin: 0 0 6px 0; font-family: var(--font-heading); font-size: clamp(28px, 6vw, 42px); line-height: 1.05; }
+    .hero-copy p { margin: 0; color: var(--muted); }
 
-    .panel {
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)) padding-box,
-                  linear-gradient(135deg, rgba(124,58,237,.3), rgba(6,182,212,.3)) border-box;
-      border: 1px solid transparent;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+    .cta {
+      display: grid; gap: 12px; width: min(760px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.02), transparent) padding-box,
+                  linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent2) 28%, transparent)) border-box;
+      border: 1px solid transparent; border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 14px;
     }
+    .input { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; }
+    .input input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 1rem; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .btn { border: 0; cursor: pointer; font-weight: 700; border-radius: 12px; padding: 12px 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff;
+      box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 28%, transparent);
+      transition: transform .12s ease, filter .2s;
+    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+    .btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    .tiny { font-size: .88rem; color: var(--muted); }
+    .examples button { padding: 6px 10px; }
 
-    .form-card {
-      display: grid; gap: 18px; padding: 22px;
-    }
-
-    .form-row { display: grid; gap: 10px; }
-    .label { font-size: .95rem; font-weight: 600; color: var(--text); }
-    .input {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--bg-elev); border: 1px solid var(--border);
-      padding: 12px 14px; border-radius: var(--radius-sm);
-      transition: border-color .2s, background .2s;
-    }
-    .input input {
-      border: 0; outline: 0; background: transparent; color: var(--text);
-      width: 100%; font-size: 0.98rem;
-    }
-    .input:focus-within { border-color: #9ca3af; box-shadow: var(--focus); }
-    .muted { color: var(--text-soft); font-size: .88rem; }
-
-    .row {
-      display: grid; grid-template-columns: 1fr; gap: 12px;
-    }
-    @media (min-width: 720px) {
-      .row-2 { grid-template-columns: 1.2fr 1fr; }
-      .row { grid-template-columns: 1fr 1fr; }
-      .btns { justify-content: space-between; }
+    /* Slot de imagen inferior (dejad vuestra ilustración aquí) */
+    .bg-slot {
+      height: var(--bg-slot-height);
+      background-image: var(--bg-image);
+      background-repeat: no-repeat;
+      background-position: center bottom;
+      background-size: contain;
+      opacity: .9;
     }
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      border: 0; cursor: pointer; user-select: none;
-      padding: 12px 16px; border-radius: var(--radius-sm);
-      font-weight: 600; transition: transform .1s ease, filter .2s ease, background .2s;
+    /* ===============================
+       ANALYZING
+       =============================== */
+    .analyzing { display: none; place-items: center; text-align: center; min-height: 320px; }
+    .timeline { width: min(840px, 96%); background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px; box-shadow: var(--shadow); }
+    .steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .step { background: var(--elev); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: grid; gap: 6px; justify-items: center; }
+    .step .dot { width: 16px; height: 16px; border-radius: 50%; background: #7c8aa8; }
+    .step.active .dot { background: var(--accent2); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent2) 26%, transparent); }
+    .step.done .dot { background: var(--ok); }
+    .progress { height: 8px; border-radius: 999px; background: var(--elev); border: 1px solid var(--border); overflow: hidden; }
+    .progress span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .3s ease; }
+    .scan {
+      height: 140px; border-radius: 12px; border: 1px dashed var(--border); display: grid; place-items: center; color: var(--muted);
+      background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--accent) 10%, transparent) 12px, transparent 12px, transparent 24px);
+      animation: slidebg 1.2s linear infinite;
     }
-    .btn-primary {
-      background: var(--grad); color: white;
-      box-shadow: 0 8px 24px rgba(124,58,237,.25);
-    }
-    .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.03); }
-    .btn-ghost {
-      background: var(--bg-elev); border: 1px solid var(--border); color: var(--text);
-    }
-    .btn-ghost:hover { transform: translateY(-2px); }
-    .btn-text { border: 0; background: transparent; color: var(--text-soft); }
+    @keyframes slidebg { from { background-position: 0 0; } to { background-position: 24px 0; } }
 
-    .tiny { font-size: .85rem; }
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .chip {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 10px; border-radius: 999px; font-weight: 600; font-size: .85rem;
-      background: var(--bg-elev); border: 1px solid var(--border);
+    /* ===============================
+       RESULTADOS
+       =============================== */
+    .results { display: none; gap: 16px; }
+    .summary {
+      position: sticky; top: 0; z-index: 1;
+      background: linear-gradient(180deg, rgba(255,255,255,.02), transparent) padding-box,
+                  linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent2) 28%, transparent)) border-box;
+      border: 1px solid transparent; border-radius: 16px; box-shadow: var(--shadow); padding: 12px; margin-bottom: 12px;
     }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 12px; align-items: stretch; }
+    @media (max-width: 980px) { .summary-grid { grid-template-columns: 1fr; } }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+
+    /* Gauge semicircular */
+    .gauge { --value: 0; --fill: hsl(180 80% 50%); display: grid; place-items: center; gap: 10px; }
+    .gauge .arc {
+      width: 220px; height: 110px; border-bottom-left-radius: 220px; border-bottom-right-radius: 220px;
+      background: conic-gradient(from -90deg, var(--fill) calc(var(--value)*1%), rgba(128,128,128,.22) 0);
+      -webkit-mask: radial-gradient(110px 110px at 50% 100%, transparent 64%, #000 65%);
+              mask: radial-gradient(110px 110px at 50% 100%, transparent 64%, #000 65%);
+    }
+    .gauge .label { font-weight: 800; font-size: 1.6rem; }
+    .chipset { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { padding: 6px 10px; border-radius: 999px; background: var(--elev); border: 1px solid var(--border); font-weight: 700; font-size: .85rem; }
     .chip.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
     .chip.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
     .chip.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, var(--border)); }
 
-    .loading {
-      display: none; place-items: center; text-align: center; gap: 14px;
-      padding: 22px;
-    }
-    .spinner {
-      width: 44px; height: 44px; border-radius: 50%;
-      border: 4px solid rgba(0,0,0,.1);
-      border-left-color: var(--accent);
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .results { display: none; }
-    .results-header {
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      margin: 8px 0 16px;
-    }
-
-    .summary {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
-      margin-bottom: 14px;
-    }
-    @media (min-width: 840px) {
-      .summary { grid-template-columns: repeat(3, 1fr); }
-    }
-
-    .score-card {
-      display: grid; gap: 10px; align-items: center; justify-items: center;
-      padding: 18px; border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow);
-    }
-    .score-title { font-weight: 700; color: var(--text-soft); font-size: .9rem; }
-
-    .radial {
-      --size: 120px;
-      --value: 0; /* 0-100 */
-      --track: color-mix(in srgb, var(--text-soft) 10%, transparent);
-      --fill: var(--accent);
-      width: var(--size); height: var(--size); border-radius: 50%;
-      background:
-        radial-gradient(closest-side, var(--card) 78%, transparent 80% 100%),
-        conic-gradient(var(--fill) calc(var(--value)*1%), var(--track) 0);
-      position: relative;
-      filter: drop-shadow(0 10px 20px rgba(124,58,237,.18));
-    }
-    .radial::after {
-      content: attr(data-label);
-      position: absolute; inset: 0; display: grid; place-items: center;
-      font-weight: 800; font-size: 1.2rem;
-    }
-
-    .grid {
-      display: grid; gap: 14px; margin-top: 8px;
-      grid-template-columns: 1fr;
-    }
-    @media (min-width: 900px) {
-      .grid { grid-template-columns: 1.1fr 1.1fr 1fr; }
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      display: grid; gap: 12px;
-      min-height: 150px;
-    }
-    .card h3 {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 1.05rem; margin: 0; letter-spacing: .2px;
-    }
-    .section {
-      display: grid; gap: 8px;
-    }
-    .list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-    .li {
-      padding: 10px 12px; border-radius: 10px;
-      background: var(--bg-elev); border: 1px solid var(--border);
-      font-size: .95rem;
-    }
-    .kv { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: .9rem; }
-
+    .llmbox { display: grid; grid-template-rows: auto 1fr auto; gap: 8px; min-height: 0; }
     .pre {
-      background: var(--bg-elev); border: 1px solid var(--border);
-      padding: 12px; border-radius: 10px; overflow: auto; max-height: 320px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: .88rem; white-space: pre-wrap;
+      background: var(--elev); border: 1px solid var(--border); border-radius: 12px; padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-size: .9rem; color: var(--text); overflow: auto; max-height: 160px; white-space: pre-wrap;
     }
-    .pre.error { border-left: 4px solid var(--bad); color: color-mix(in srgb, var(--bad) 90%, var(--text)); }
+    .pre.error { border-left: 4px solid var(--bad); }
 
-    .footer-actions {
-      display: grid; gap: 10px; grid-template-columns: 1fr;
-      margin-top: 10px;
-    }
-    @media (min-width: 640px) {
-      .footer-actions { grid-template-columns: 1fr 1fr 1fr; }
-    }
+    .details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+    @media (max-width: 980px) { .details { grid-template-columns: 1fr; } }
+    .block h3 { margin: 0 0 8px 0; }
+    .kv { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace; font-size: .9rem; color: var(--muted); }
+    .list { display: grid; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
+    .li { background: var(--elev); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
 
-    footer {
-      margin-top: 28px; padding-top: 18px;
-      display: grid; gap: 8px; justify-items: center; text-align: center;
-      border-top: 1px solid var(--border); color: var(--text-soft); font-size: .92rem;
-    }
-    footer .links { display: flex; gap: 14px; flex-wrap: wrap; }
+    .radar-box { width: 100%; aspect-ratio: 1.4 / 1; background: var(--elev); border: 1px solid var(--border); border-radius: 12px; display: grid; place-items: center; }
+    .radar-box svg { width: 92%; height: auto; }
 
-    /* Modal */
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(2,6,23,0.55);
-      display: none; align-items: center; justify-content: center; padding: 20px;
-      z-index: 50;
-    }
-    .modal {
-      background: var(--card); color: var(--text); border-radius: var(--radius-lg);
-      width: min(680px, 92%); box-shadow: var(--shadow); padding: 18px;
-      display: grid; gap: 10px;
-    }
-    .modal .head { display: flex; align-items: center; justify-content: space-between; }
-    .modal .body { color: var(--text-soft); display: grid; gap: 10px; }
-    .modal .body ul { margin: 0 0 0 20px; }
-    .modal-open { display: flex; }
+    /* Footer */
+    footer { display: flex; justify-content: space-between; color: var(--muted); font-size: .9rem; padding: 10px 0 28px; }
 
-    /* Toast */
-    .toast {
-      position: fixed; right: 20px; bottom: 20px; z-index: 60;
-      background: var(--card); border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      padding: 10px 12px; border-radius: 10px; box-shadow: var(--shadow);
-      display: none;
-    }
-    .toast.show { display: block; animation: fade 2.2s ease both; }
-    @keyframes fade {
-      0% { opacity: 0; transform: translateY(8px); }
-      12% { opacity: 1; transform: translateY(0); }
-      88% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(8px); }
+    .hidden { display: none !important; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .icon-btn:hover, .btn:hover { transform: none !important; }
+      .sweep { animation: none; }
     }
   </style>
 </head>
-<body data-theme="light">
-  <div class="container">
+
+<body data-theme="dark" data-palette="violet" data-font="inter" style="--bg-image: none;">
+  <div class="wrap">
     <header>
-      <div class="brand" aria-label="WebanAIyze">
-        <div class="brand-badge" aria-hidden="true"></div>
-        <div><span>WebanAIyze</span></div>
+      <div class="studio">
+        <div id="radarLogo" class="radar" title="Radar neural · clic = ping · doble clic = turbo" aria-label="Logo Radar Neural">
+          <div class="sweep"></div>
+          <span class="node n1"></span><span class="node n2"></span><span class="node n3"></span><span class="node n4"></span>
+          <span class="link l1"></span><span class="link l2"></span><span class="link l3"></span>
+        </div>
+        <div class="name" id="studioName">[Nombre del estudio]</div>
       </div>
+
+      <div class="brand">
+        <h1>WebanAIyze</h1>
+      </div>
+
       <div class="actions">
-        <button class="btn-icon" id="how-btn" title="Cómo funciona" aria-label="Cómo funciona">❓</button>
-        <button class="btn-icon" id="theme-toggle" aria-label="Cambiar tema">🌓</button>
+        <button class="icon-btn" id="themeToggle" title="Tema">🌓</button>
+        <button class="icon-btn" id="paletteBtn" title="Cambiar paleta">🎨</button>
+        <button class="icon-btn" id="fontBtn" title="Cambiar tipografía">🅰️</button>
+        <button class="icon-btn" id="guideBtn" title="Guía">📘</button>
       </div>
     </header>
 
-    <main>
-      <section class="hero">
-        <h1>Analiza tu web con un toque de IA</h1>
-        <p>SEO, seguridad y un llm.txt listo para bots. Todo en una sola página, modo claro/oscuro y exportable. Perfecto para GitHub Pages y presupuestos indie.</p>
-      </section>
+    <!-- HERO arriba; abajo queda el slot de imagen -->
+    <section class="hero" id="screen-landing">
+      <div class="hero-copy">
+        <h2>Analiza tu web sin rodeos</h2>
+        <p>Pega tu URL. Generamos puntuación SEO, revisión de seguridad y un llm.txt listo para agentes. Todo en una sola página.</p>
+      </div>
 
-      <section class="panel form-card" id="form-section">
-        <form id="analyzer-form" class="form">
-          <div class="form-row">
-            <label class="label" for="website-url">URL del sitio</label>
-            <div class="input">
-              <span>🌐</span>
-              <input type="url" id="website-url" placeholder="https://ejemplo.com" required />
-            </div>
+      <div class="cta">
+        <div class="input">
+          <span>🌐</span>
+          <input type="url" id="url" placeholder="https://tusitio.com" autocomplete="url" required/>
+        </div>
+        <div class="row">
+          <div class="input" style="flex:1">
+            <span>🔑</span>
+            <input type="password" id="apiKey" placeholder="Google AI API Key (si no pones una, verás el Modo Demo)" autocomplete="off"/>
+            <button type="button" id="toggleKey" class="btn-ghost">mostrar</button>
           </div>
+          <button class="btn" id="analyze">Analizar</button>
+        </div>
+        <div class="tiny">Pulsa Enter para analizar. No guardamos tu clave.</div>
+        <div class="row examples tiny" style="margin-top:4px;">
+          Ejemplos:
+          <button class="btn-ghost" data-sample="https://www.cloudflare.com">cloudflare.com</button>
+          <button class="btn-ghost" data-sample="https://developer.mozilla.org">developer.mozilla.org</button>
+          <button class="btn-ghost" data-sample="https://www.nintendo.com">nintendo.com</button>
+        </div>
+      </div>
+    </section>
 
-          <div class="row">
-            <div class="form-row">
-              <label class="label" for="api-key">Google AI API Key</label>
-              <div class="input">
-                <span>🔑</span>
-                <input type="password" id="api-key" placeholder="AIza..." required />
-                <button type="button" class="btn-text tiny" id="toggle-key">mostrar</button>
+    <!-- Slot de imagen de fondo inferior -->
+    <div class="bg-slot" aria-hidden="true"></div>
+
+    <!-- Analizando -->
+    <section class="analyzing" id="screen-analyzing">
+      <div class="timeline">
+        <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div class="tiny" id="analyzingMsg">Estamos trabajando en ello…</div>
+          <div class="progress" style="width:280px;"><span id="overallProgress"></span></div>
+        </div>
+
+        <div class="scan">Escaneando tu sitio…</div>
+
+        <div class="steps" style="margin-top:10px;">
+          <div class="step active" id="step-seo">
+            <div class="dot"></div>
+            <div><strong>SEO</strong></div>
+            <div class="tiny">Metas, headings, accesibilidad</div>
+          </div>
+          <div class="step" id="step-sec">
+            <div class="dot"></div>
+            <div><strong>Seguridad</strong></div>
+            <div class="tiny">SSL, headers, mixed content</div>
+          </div>
+          <div class="step" id="step-llm">
+            <div class="dot"></div>
+            <div><strong>LLM.txt</strong></div>
+            <div class="tiny">Guía para bots</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resultados -->
+    <section id="screen-results" class="results">
+      <div class="summary">
+        <div class="summary-grid">
+          <div class="card gauge" id="seoGauge">
+            <div class="arc" id="seoArc" style="--value:0;--fill:hsl(0 80% 50%);"></div>
+            <div class="label" id="seoLabel">0</div>
+            <div class="tiny" id="seoRank">Puntuación SEO</div>
+          </div>
+          <div class="card gauge" id="secGauge">
+            <div class="arc" id="secArc" style="--value:0;--fill:hsl(0 80% 50%);"></div>
+            <div class="label" id="secLabel">0</div>
+            <div class="tiny" id="secRank">Puntuación Seguridad</div>
+          </div>
+          <div class="card llmbox">
+            <div class="row" style="justify-content:space-between; align-items:center;">
+              <strong>LLM.txt</strong>
+              <div class="row" style="gap:6px;">
+                <button class="btn-ghost" id="copyLLM">Copiar</button>
+                <button class="btn-ghost" id="dlTxt">TXT</button>
+                <button class="btn-ghost" id="dlJson">JSON</button>
               </div>
-              <div class="muted tiny">La API Key solo se usa en tu navegador. No se guarda.</div>
             </div>
-
-            <div class="form-row">
-              <label class="label">Acciones</label>
-              <div class="btns" style="display:flex; gap:10px; flex-wrap:wrap;">
-                <button class="btn btn-primary" id="analyze-button">🔍 Analizar</button>
-                <button type="button" class="btn btn-ghost" id="reset-button">Limpiar</button>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <div class="chips tiny">
-          <span class="chip">Ejemplos: </span>
-          <button class="chip btn-text" data-sample="https://www.cloudflare.com">cloudflare.com</button>
-          <button class="chip btn-text" data-sample="https://developer.mozilla.org">developer.mozilla.org</button>
-          <button class="chip btn-text" data-sample="https://www.nintendo.com">nintendo.com</button>
-        </div>
-      </section>
-
-      <section class="panel loading" id="loading">
-        <div class="spinner" aria-hidden="true"></div>
-        <div>
-          <strong>Analizando con Gemini Flash…</strong>
-          <div class="muted tiny" aria-live="polite">Esto puede tardar unos segundos.</div>
-        </div>
-      </section>
-
-      <section class="results" id="results">
-        <div class="results-header">
-          <h2 style="margin:0;">Informe</h2>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn btn-ghost" id="back-button">Analizar otra URL</button>
+            <pre class="pre" id="llmText">Sin datos.</pre>
+            <div class="chipset" id="quickChips"><span class="chip">Cargando…</span></div>
           </div>
         </div>
+      </div>
 
-        <div class="summary">
-          <div class="score-card">
-            <div class="score-title">SEO</div>
-            <div class="radial" id="seo-score" data-label="0" style="--value:0"></div>
-          </div>
-          <div class="score-card">
-            <div class="score-title">Seguridad</div>
-            <div class="radial" id="sec-score" data-label="0" style="--value:0"></div>
-          </div>
-          <div class="card" style="align-content:start;">
-            <h3>Estado rápido</h3>
-            <div class="chips" id="quick-chips">
-              <span class="chip">Sin datos todavía</span>
-            </div>
-          </div>
+      <div class="details">
+        <div class="block card">
+          <h3>SEO — detalles</h3>
+          <div class="kv" id="seoKV"></div>
+          <ul class="list" id="seoIssues"></ul>
+          <ul class="list" id="seoRecos"></ul>
+          <details style="margin-top:8px;">
+            <summary class="tiny">Respuesta en bruto</summary>
+            <pre class="pre" id="seoRaw">Sin datos.</pre>
+          </details>
+        </div>
+        <div class="block card">
+          <h3>Seguridad — detalles</h3>
+          <div class="kv" id="secKV"></div>
+          <ul class="list" id="secIssues"></ul>
+          <ul class="list" id="secRecos"></ul>
+          <details style="margin-top:8px;">
+            <summary class="tiny">Respuesta en bruto</summary>
+            <pre class="pre" id="secRaw">Sin datos.</pre>
+          </details>
         </div>
 
-        <div class="grid">
-          <div class="card">
-            <h3>🔍 SEO: detalles</h3>
-            <div class="section">
-              <div class="kv" id="seo-kv"></div>
-              <div class="list" id="seo-issues"></div>
-              <div class="list" id="seo-recos"></div>
-            </div>
-            <details>
-              <summary class="tiny">Ver respuesta en bruto (fallback)</summary>
-              <pre class="pre" id="seo-raw">Sin contenido.</pre>
-            </details>
+        <div class="block card" style="grid-column: 1 / -1;">
+          <h3>Radar de categorías</h3>
+          <div class="radar-box">
+            <svg viewBox="0 0 300 200">
+              <defs>
+                <radialGradient id="rfill" cx="50%" cy="50%">
+                  <stop offset="0%" stop-color="#6d5efc" stop-opacity=".16"/>
+                  <stop offset="100%" stop-color="#14d4ff" stop-opacity=".08"/>
+                </radialGradient>
+              </defs>
+              <g stroke="rgba(150,160,190,.35)" stroke-width="1">
+                <line x1="150" y1="170" x2="150" y2="30"/>
+                <line x1="150" y1="170" x2="40" y2="110"/>
+                <line x1="150" y1="170" x2="260" y2="110"/>
+                <line x1="150" y1="170" x2="90" y2="40"/>
+                <line x1="150" y1="170" x2="210" y2="40"/>
+              </g>
+              <polygon id="radarPoly" points="150,170 150,170 150,170 150,170 150,170" fill="url(#rfill)" stroke="#6d5efc" stroke-opacity=".6"/>
+              <g font-size="12" fill="currentColor" opacity=".7">
+                <text x="146" y="24" text-anchor="middle">Base</text>
+                <text x="82" y="34" text-anchor="middle">Headings</text>
+                <text x="218" y="34" text-anchor="middle">Imágenes</text>
+                <text x="32" y="112" text-anchor="middle">Mobile</text>
+                <text x="268" y="112" text-anchor="middle">Metas</text>
+              </g>
+            </svg>
           </div>
-
-          <div class="card">
-            <h3>🛡️ Seguridad: detalles</h3>
-            <div class="section">
-              <div class="kv" id="sec-kv"></div>
-              <div class="list" id="sec-issues"></div>
-              <div class="list" id="sec-recos"></div>
-            </div>
-            <details>
-              <summary class="tiny">Ver respuesta en bruto (fallback)</summary>
-              <pre class="pre" id="sec-raw">Sin contenido.</pre>
-            </details>
-          </div>
-
-          <div class="card">
-            <h3>📄 LLM.txt</h3>
-            <pre class="pre" id="llm-result">Esperando generación…</pre>
-            <div class="footer-actions">
-              <button class="btn btn-primary" id="copy-llm">Copiar llm.txt</button>
-              <button class="btn btn-ghost" id="download-txt">Descargar TXT</button>
-              <button class="btn btn-ghost" id="download-json">Descargar JSON</button>
-            </div>
-          </div>
+          <div class="tiny" style="margin-top:6px;">Radar generado a partir del JSON (heurístico: base/metas/headings/móvil/imágenes).</div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
 
     <footer>
-      <div class="links">
-        <a href="#" class="muted">Privacidad</a>
-        <a href="#" class="muted">Términos</a>
-        <a href="https://github.com/your-username/webanalisyze" target="_blank" rel="noopener" class="muted">GitHub</a>
-      </div>
-      <div class="tiny">© 2025 WebanAIyze — hecho con café y algún que otro bug simpático.</div>
+      <div>© 2025 WebanAIyze — listo para GitHub Pages</div>
+      <div class="tiny">Atajos: Enter = Analizar</div>
     </footer>
   </div>
 
-  <!-- Modal "Cómo funciona" -->
-  <div class="modal-backdrop" id="modal">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="head">
-        <h3 id="modal-title" style="margin:0;">Cómo funciona</h3>
-        <button class="btn-icon" id="modal-close" aria-label="Cerrar">✖️</button>
-      </div>
-      <div class="body">
-        <p>Esto es 100% front-end. Tu API Key se usa solo en tu navegador. Sin backend, sin almacenamiento.</p>
-        <ul>
-          <li>Le pasamos a Gemini prompts específicos para SEO, seguridad y un llm.txt.</li>
-          <li>Pedimos respuesta en JSON para poder dibujar puntuaciones y listas.</li>
-          <li>Si el modelo devuelve texto raro, hacemos fallback y te lo mostramos tal cual.</li>
-          <li>Descargas disponibles: informe TXT, datos JSON y copia rápida del llm.txt.</li>
-        </ul>
-        <p class="tiny">Nota técnica: sin servidor no podemos leer HTML real ni headers por CORS. Esto es una guía rápida/heurística. Para auditorías serias, meted un proxy simple y ya jugamos en otra liga.</p>
-      </div>
+  <!-- Guía -->
+  <dialog id="guide" style="border:none; border-radius:16px; padding:16px; width:min(680px,92%); background:var(--card); color:var(--text); box-shadow:var(--shadow)">
+    <h3 style="margin:0 0 8px 0;">Cómo funciona</h3>
+    <p class="tiny">100% front-end. Si no pones API Key, verás un Modo Demo para probar el flujo. Para leer HTML/headers reales hará falta un proxy en el futuro.</p>
+    <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+      <button id="closeGuide" class="btn-ghost">Cerrar</button>
     </div>
-  </div>
-
-  <!-- Toast -->
-  <div class="toast" id="toast" role="status" aria-live="polite">Copiado al portapapeles</div>
+  </dialog>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const $ = (sel) => document.querySelector(sel);
+    const $ = s => document.querySelector(s);
 
-      // Theme
-      const themeBtn = $('#theme-toggle');
-      const savedTheme = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.body.setAttribute('data-theme', savedTheme);
-      themeBtn.addEventListener('click', () => {
-        const cur = document.body.getAttribute('data-theme');
-        const next = cur === 'light' ? 'dark' : 'light';
-        document.body.setAttribute('data-theme', next);
-        localStorage.setItem('theme', next);
-      });
+    // Tema
+    const themeToggle = $('#themeToggle');
+    const savedTheme = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.body.setAttribute('data-theme', savedTheme);
+    themeToggle?.addEventListener('click', () => {
+      const cur = document.body.getAttribute('data-theme');
+      const next = cur === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
 
-      // Modal
-      const modal = $('#modal');
-      $('#how-btn').addEventListener('click', () => modal.classList.add('modal-open'));
-      $('#modal-close').addEventListener('click', () => modal.classList.remove('modal-open'));
-      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('modal-open'); });
+    // Paleta y Tipografías
+    const palettes = ['violet','sunset','mint','candy','mono'];
+    $('#paletteBtn')?.addEventListener('click', () => {
+      const cur = document.body.getAttribute('data-palette') || 'violet';
+      const idx = palettes.indexOf(cur);
+      const next = palettes[(idx + 1) % palettes.length];
+      document.body.setAttribute('data-palette', next);
+    });
+    const fonts = ['inter','sora','outfit'];
+    $('#fontBtn')?.addEventListener('click', () => {
+      const cur = document.body.getAttribute('data-font') || 'inter';
+      const idx = fonts.indexOf(cur);
+      const next = fonts[(idx + 1) % fonts.length];
+      document.body.setAttribute('data-font', next);
+    });
 
-      // Toast
-      const toast = $('#toast');
-      function showToast(msg = 'Hecho') {
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2200);
+    // Guía
+    const guide = $('#guide'); const guideBtn = $('#guideBtn'); const closeGuide = $('#closeGuide');
+    guideBtn?.addEventListener('click', () => guide.showModal());
+    closeGuide?.addEventListener('click', () => guide.close());
+
+    // Radar neural: ping y turbo
+    const radarLogo = $('#radarLogo');
+    radarLogo?.addEventListener('click', e => {
+      const rect = radarLogo.getBoundingClientRect();
+      const x = e.clientX - rect.left, y = e.clientY - rect.top;
+      const dot = document.createElement('span');
+      dot.className = 'ping-dot';
+      dot.style.left = (x - 3) + 'px';
+      dot.style.top = (y - 3) + 'px';
+      radarLogo.appendChild(dot);
+      setTimeout(() => dot.remove(), 700);
+    });
+    radarLogo?.addEventListener('dblclick', () => {
+      const turbo = document.body.getAttribute('data-turbo') === 'on' ? 'off' : 'on';
+      document.body.setAttribute('data-turbo', turbo);
+    });
+
+    // Elements
+    const screenLanding = $('#screen-landing');
+    const bgSlot = document.querySelector('.bg-slot');
+    const screenAnalyzing = $('#screen-analyzing');
+    const screenResults = $('#screen-results');
+
+    const urlInput = $('#url');
+    const apiKey = $('#apiKey');
+    const toggleKey = $('#toggleKey');
+    const analyzeBtn = $('#analyze');
+
+    const stepSEO = $('#step-seo'); const stepSEC = $('#step-sec'); const stepLLM = $('#step-llm');
+    const overallBar = $('#overallProgress');
+    const analyzingMsg = $('#analyzingMsg');
+
+    const seoArc = $('#seoArc'); const seoLabel = $('#seoLabel'); const seoRank = $('#seoRank');
+    const secArc = $('#secArc'); const secLabel = $('#secLabel'); const secRank = $('#secRank');
+    const llmText = $('#llmText');
+    const copyLLM = $('#copyLLM'); const dlTxt = $('#dlTxt'); const dlJson = $('#dlJson');
+    const quickChips = $('#quickChips');
+
+    const seoKV = $('#seoKV'); const seoIssues = $('#seoIssues'); const seoRecos = $('#seoRecos'); const seoRaw = $('#seoRaw');
+    const secKV = $('#secKV'); const secIssues = $('#secIssues'); const secRecos = $('#secRecos'); const secRaw = $('#secRaw');
+
+    // Toggle key
+    toggleKey?.addEventListener('click', () => {
+      const isPwd = apiKey.type === 'password';
+      apiKey.type = isPwd ? 'text' : 'password';
+      toggleKey.textContent = isPwd ? 'ocultar' : 'mostrar';
+    });
+
+    // Samples
+    document.querySelectorAll('[data-sample]').forEach(b => b.addEventListener('click', () => {
+      urlInput.value = b.getAttribute('data-sample');
+    }));
+
+    // Enter -> analizar
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && document.activeElement && ['INPUT','BUTTON'].includes(document.activeElement.tagName)) {
+        e.preventDefault(); analyzeBtn.click();
       }
+    });
 
-      // Form refs
-      const form = $('#analyzer-form');
-      const urlInput = $('#website-url');
-      const keyInput = $('#api-key');
-      const toggleKeyBtn = $('#toggle-key');
-      const resetBtn = $('#reset-button');
-      const analyzeBtn = $('#analyze-button');
-
-      const formSection = $('#form-section');
-      const loading = $('#loading');
-      const results = $('#results');
-
-      // Results refs
-      const seoScoreEl = $('#seo-score');
-      const secScoreEl = $('#sec-score');
-      const chips = $('#quick-chips');
-
-      const seoKV = $('#seo-kv');
-      const seoIssues = $('#seo-issues');
-      const seoRecos = $('#seo-recos');
-      const seoRaw = $('#seo-raw');
-
-      const secKV = $('#sec-kv');
-      const secIssues = $('#sec-issues');
-      const secRecos = $('#sec-recos');
-      const secRaw = $('#sec-raw');
-
-      const llmResult = $('#llm-result');
-
-      const backButton = $('#back-button');
-      const copyLLM = $('#copy-llm');
-      const downloadTxt = $('#download-txt');
-      const downloadJson = $('#download-json');
-
-      // Helpers
-      function setRadial(el, value, labelPrefix = '') {
-        const v = Math.max(0, Math.min(100, Math.round(value || 0)));
-        el.style.setProperty('--value', v);
-        const hue = Math.round((v / 100) * 120); // 0=red,120=green
-        const color = `hsl(${hue} 80% 50%)`;
-        el.style.setProperty('--fill', color);
-        el.setAttribute('data-label', `${labelPrefix}${v}`);
+    // Helpers
+    function sanitizeUrl(u){ try{ return new URL(u).toString(); } catch { return null; } }
+    function setGauge(elArc, elLabel, value){
+      const v = Math.max(0, Math.min(100, Math.round(value||0)));
+      const hue = Math.round((v/100)*120);
+      elArc.style.setProperty('--value', v);
+      elArc.style.setProperty('--fill', `hsl(${hue} 80% 52%)`);
+      elLabel.textContent = v;
+    }
+    function setRank(el, score){
+      el.textContent = score >= 90 ? 'Excelente' :
+                       score >= 75 ? 'Muy bien' :
+                       score >= 60 ? 'Mejorable' : 'Necesita atención';
+    }
+    function chip(text, type=''){ const s=document.createElement('span'); s.className=`chip ${type}`; s.textContent=text; return s; }
+    function displayList(container, title, items){
+      container.innerHTML = '';
+      if (!items || !items.length) return;
+      const head=document.createElement('div'); head.textContent=title; head.style.fontWeight='800'; head.className='tiny';
+      container.appendChild(head);
+      items.forEach(t=>{ const li=document.createElement('li'); li.className='li'; li.textContent=t; container.appendChild(li); });
+    }
+    function kvSEO(container, d){
+      container.innerHTML=''; if (!d) return;
+      const lines=[];
+      if (d.titleTag) lines.push(`title: ${d.titleTag.present ? (d.titleTag.length ?? '—')+' chars' : 'no'}`);
+      if (d.metaDescription) lines.push(`meta: ${d.metaDescription.present ? (d.metaDescription.length ?? '—')+' chars' : 'no'}`);
+      if (d.headings) lines.push(`h1/h2/h3: ${d.headings.h1 ?? '?'} / ${d.headings.h2 ?? '?'} / ${d.headings.h3 ?? '?'}`);
+      if (d.mobile) lines.push(`móvil: ${d.mobile.status ?? 'unknown'}`);
+      if (d.images) lines.push(`img alt OK / faltan: ${d.images.withAlt ?? '?'} / ${d.images.withoutAlt ?? '?'}`);
+      const div=document.createElement('div'); div.className='kv'; div.textContent=lines.join(' | '); container.appendChild(div);
+    }
+    function kvSEC(container, d){
+      container.innerHTML=''; if (!d) return;
+      const lines=[];
+      if (d.ssl) lines.push(`SSL: ${d.ssl.valid === true ? 'válido' : d.ssl.valid === false ? 'NO' : 'unknown'}`);
+      if (d.mixedContent) lines.push(`mixed: ${d.mixedContent.found === true ? 'sí' : d.mixedContent.found === false ? 'no' : 'unknown'}`);
+      if (d.headers) {
+        const h=d.headers;
+        lines.push(`hdr: X-CTO ${h.xContentTypeOptions ?? '?'} | XFO ${h.xFrameOptions ?? '?'} | CSP ${h.contentSecurityPolicy ?? '?'} | Referrer ${h.referrerPolicy ?? '?'}`);
       }
-
-      function sanitizeUrl(u) {
-        try { return new URL(u).toString(); } catch { return null; }
+      const div=document.createElement('div'); div.className='kv'; div.textContent=lines.join(' | '); container.appendChild(div);
+    }
+    function updateChips(seo, sec){
+      quickChips.innerHTML='';
+      if (!seo && !sec){ quickChips.append(chip('Sin datos')); return; }
+      if (seo){
+        const s=Math.round(seo.score ?? 0);
+        quickChips.append(chip(`SEO ${s}/100`, s>=80?'ok':s>=55?'warn':'bad'));
+        if (seo.titleTag?.present === false) quickChips.append(chip('Sin <title>','bad'));
+        if (seo.metaDescription?.present === false) quickChips.append(chip('Sin meta','warn'));
+        if ((seo.images?.withoutAlt ?? 0)>0) quickChips.append(chip('Imágenes sin alt','warn'));
       }
-
-      function displayList(container, title, items, variant = 'li') {
-        container.innerHTML = '';
-        if (!items || !items.length) return;
-        const header = document.createElement('div');
-        header.className = 'tiny';
-        header.style.fontWeight = '700';
-        header.textContent = title;
-        container.appendChild(header);
-        items.forEach(t => {
-          const li = document.createElement('div');
-          li.className = variant;
-          li.textContent = t;
-          container.appendChild(li);
-        });
+      if (sec){
+        const s=Math.round(sec.score ?? 0);
+        quickChips.append(chip(`Seguridad ${s}/100`, s>=80?'ok':s>=55?'warn':'bad'));
+        if (sec.headers?.contentSecurityPolicy === 'missing') quickChips.append(chip('Falta CSP','warn'));
+        if (sec.headers?.xFrameOptions === 'missing') quickChips.append(chip('Falta XFO','warn'));
+        if (sec.mixedContent?.found === true) quickChips.append(chip('Mixed content','bad'));
       }
+    }
+    const clamp = (n,min=0,max=100)=> Math.max(min, Math.min(max, Math.round(n || 0)));
+    function setRadar(seo){
+      const poly = document.getElementById('radarPoly');
+      if (!seo){ poly.setAttribute('points','150,170 150,170 150,170 150,170 150,170'); return; }
+      const base = ((seo.titleTag?.present?30:0) + (seo.metaDescription?.present?30:0) + (seo.headings?.h1===1?40:20));
+      const headings = clamp((seo.headings?.h1 === 1 ? 90 : 60) - ((seo.headings?.issues?.length || 0)*10), 0, 100);
+      const images = clamp(100 - (seo.images?.withoutAlt || 0)*25, 0, 100);
+      const mobile = seo.mobile?.status === 'ok' ? 90 : seo.mobile?.status === 'warning' ? 60 : seo.mobile?.status === 'poor' ? 30 : 50;
+      const metas = (seo.titleTag?.present ? 40 : 0) + (seo.metaDescription?.present ? 60 : 0);
+      const vals = [clamp(base), headings, images, mobile, metas];
+      const center = {x:150, y:170}, maxR=120, angs=[-90,-140,-40,180,0];
+      const pts = vals.map((v,i)=> {
+        const r = (v/100) * maxR * .85;
+        const a = (angs[i]*Math.PI)/180;
+        return `${center.x + r*Math.cos(a)},${center.y + r*Math.sin(a)}`;
+      }).join(' ');
+      poly.setAttribute('points', pts);
+    }
 
-      function kvBlock(container, data) {
-        container.innerHTML = '';
-        if (!data) return;
-        const lines = [];
-        if (data.titleTag) lines.push(`title: ${data.titleTag.present ? (data.titleTag.length ?? 'longitud desconocida') + ' chars' : 'no encontrado'}`);
-        if (data.metaDescription) lines.push(`meta description: ${data.metaDescription.present ? (data.metaDescription.length ?? 'longitud desconocida') + ' chars' : 'no encontrada'}`);
-        if (data.headings) lines.push(`h1/h2/h3: ${data.headings.h1 ?? '?'} / ${data.headings.h2 ?? '?'} / ${data.headings.h3 ?? '?'}`);
-        if (data.mobile) lines.push(`móvil: ${data.mobile.status ?? 'desconocido'}`);
-        if (data.images && (data.images.withAlt != null || data.images.withoutAlt != null)) {
-          lines.push(`imágenes con alt / sin alt: ${data.images.withAlt ?? '?'} / ${data.images.withoutAlt ?? '?'}`);
-        }
-        if (lines.length) {
-          const pre = document.createElement('div');
-          pre.className = 'kv';
-          pre.textContent = lines.join(' | ');
-          container.appendChild(pre);
-        }
-      }
+    // Copy & downloads
+    copyLLM?.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(llmText.textContent || ''); } catch {}
+    });
+    function download(filename, content, type='text/plain'){
+      const blob = new Blob([content], {type});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+      setTimeout(()=>{URL.revokeObjectURL(url); a.remove();},0);
+    }
+    dlTxt?.addEventListener('click', () => {
+      const report = `WebanAIyze — Informe
+=====================
+Sitio: ${urlInput.value || '—'}
 
-      function secKvBlock(container, data) {
-        container.innerHTML = '';
-        if (!data) return;
-        const lines = [];
-        if (data.ssl) lines.push(`SSL: ${data.ssl.valid === true ? 'válido' : data.ssl.valid === false ? 'NO válido' : 'desconocido'}`);
-        if (data.mixedContent) lines.push(`mixed content: ${data.mixedContent.found === true ? 'sí' : data.mixedContent.found === false ? 'no' : 'desconocido'}`);
-        if (data.headers) {
-          const h = data.headers;
-          lines.push(`headers: X-CTO ${h.xContentTypeOptions ?? '¿?'} | X-Frame-Options ${h.xFrameOptions ?? '¿?'} | CSP ${h.contentSecurityPolicy ?? '¿?'} | Referrer-Policy ${h.referrerPolicy ?? '¿?'}`);
-        }
-        if (lines.length) {
-          const pre = document.createElement('div');
-          pre.className = 'kv';
-          pre.textContent = lines.join(' | ');
-          container.appendChild(pre);
-        }
-      }
-
-      function updateChips(seo, sec) {
-        chips.innerHTML = '';
-        if (!seo && !sec) { chips.innerHTML = '<span class="chip">Sin datos</span>'; return; }
-        const mk = (text, type = '') => {
-          const s = document.createElement('span');
-          s.className = `chip ${type}`;
-          s.textContent = text;
-          return s;
-        };
-        if (seo) {
-          const s = Math.round(seo.score ?? 0);
-          chips.append(mk(`SEO ${s}/100`, s >= 80 ? 'ok' : s >= 55 ? 'warn' : 'bad'));
-          if (seo.titleTag && seo.titleTag.present === false) chips.append(mk('Sin title', 'bad'));
-          if (seo.metaDescription && seo.metaDescription.present === false) chips.append(mk('Sin meta description', 'warn'));
-          if (seo.headings && (seo.headings.issues || []).includes('Multiple H1')) chips.append(mk('Múltiples H1', 'warn'));
-          if (seo.images && (seo.images.withoutAlt ?? 0) > 0) chips.append(mk('Imágenes sin alt', 'warn'));
-          if (seo.mobile && seo.mobile.status === 'poor') chips.append(mk('Móvil mejorable', 'bad'));
-        }
-        if (sec) {
-          const s = Math.round(sec.score ?? 0);
-          chips.append(mk(`Seguridad ${s}/100`, s >= 80 ? 'ok' : s >= 55 ? 'warn' : 'bad'));
-          if (sec.headers && (sec.headers.contentSecurityPolicy === 'missing' || sec.headers.contentSecurityPolicy === false)) chips.append(mk('Sin CSP', 'warn'));
-          if (sec.headers && (sec.headers.xFrameOptions === 'missing' || sec.headers.xFrameOptions === false)) chips.append(mk('Sin X-Frame-Options', 'warn'));
-          if (sec.mixedContent && sec.mixedContent.found === true) chips.append(mk('Mixed content', 'bad'));
-        }
-      }
-
-      function displayResult(element, content, isError = false) {
-        element.textContent = content;
-        element.classList.toggle('error', Boolean(isError));
-      }
-
-      // Toggle API key visibility
-      toggleKeyBtn.addEventListener('click', () => {
-        const isPwd = keyInput.getAttribute('type') === 'password';
-        keyInput.setAttribute('type', isPwd ? 'text' : 'password');
-        toggleKeyBtn.textContent = isPwd ? 'ocultar' : 'mostrar';
-      });
-
-      // Quick samples
-      document.querySelectorAll('[data-sample]').forEach(b => {
-        b.addEventListener('click', () => {
-          urlInput.value = b.getAttribute('data-sample');
-        });
-      });
-
-      // Reset
-      resetBtn.addEventListener('click', () => {
-        form.reset();
-        toggleKeyBtn.textContent = 'mostrar';
-      });
-
-      // Back button
-      backButton.addEventListener('click', () => {
-        results.style.display = 'none';
-        formSection.style.display = 'grid';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-
-      // Copy llm.txt
-      copyLLM.addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(llmResult.textContent || '');
-          showToast('llm.txt copiado');
-        } catch {
-          showToast('No se pudo copiar');
-        }
-      });
-
-      // Downloads
-      function download(filename, content, type = 'text/plain') {
-        const blob = new Blob([content], { type });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-          a.remove();
-        }, 0);
-      }
-
-      downloadTxt.addEventListener('click', () => {
-        const u = urlInput.value || 'desconocido';
-        const txt = `WebanAIyze — Informe
-======================
-
-Sitio: ${u}
-
---- SEO ---
+--- SEO RAW ---
 ${seoRaw.textContent}
 
---- Seguridad ---
+--- Seguridad RAW ---
 ${secRaw.textContent}
 
 --- LLM.txt ---
-${llmResult.textContent}
+${llmText.textContent}
 `;
-        const name = `webanAIyze-${new Date().toISOString().slice(0,10)}.txt`;
-        download(name, txt, 'text/plain');
-      });
+      download(`webanAIyze-${new Date().toISOString().slice(0,10)}.txt`, report, 'text/plain');
+    });
+    dlJson?.addEventListener('click', () => {
+      const payload = {
+        website: urlInput.value || null,
+        generatedAt: new Date().toISOString(),
+        seo: window.__seo || null,
+        security: window.__sec || null,
+        llmTxt: llmText.textContent || null
+      };
+      download(`webanAIyze-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(payload, null, 2), 'application/json');
+    });
 
-      downloadJson.addEventListener('click', () => {
-        const payload = {
-          website: urlInput.value || null,
-          generatedAt: new Date().toISOString(),
-          seo: window.__seo || null,
-          security: window.__sec || null,
-          llmTxt: llmResult.textContent || null
-        };
-        const name = `webanAIyze-${new Date().toISOString().slice(0,10)}.json`;
-        download(name, JSON.stringify(payload, null, 2), 'application/json');
-      });
-
-      // Gemini
-      async function callGeminiAPI(prompt, apiKey) {
-        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-        const body = {
-          contents: [{ role: 'user', parts: [{ text: prompt }] }]
-        };
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': apiKey
-          },
-          body: JSON.stringify(body)
-        });
-        if (!res.ok) {
-          let msg = `Error ${res.status}`;
-          try {
-            const j = await res.json();
-            if (j?.error?.message) msg = j.error.message;
-          } catch {}
-          throw new Error(msg);
-        }
-        const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!text) throw new Error('Respuesta vacía del modelo');
-        return text.trim();
+    // API Google Generative Language
+    async function callGeminiAPI(prompt, key){
+      const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+      const body = { contents: [{ role:'user', parts:[{text: prompt}] }] };
+      const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key': key}, body: JSON.stringify(body) });
+      if (!res.ok) {
+        let msg = `Error ${res.status}`;
+        try { const j=await res.json(); if (j?.error?.message) msg=j.error.message; } catch {}
+        throw new Error(msg);
       }
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) throw new Error('Respuesta vacía');
+      return text.trim();
+    }
+    function tryParseJSON(str){
+      if (!str) return null;
+      str = str.replace(/```json|```/g, '').trim();
+      try { return JSON.parse(str); } catch {}
+      const a=str.indexOf('{'), b=str.lastIndexOf('}');
+      if (a!==-1 && b!==-1 && b>a){ try { return JSON.parse(str.slice(a,b+1)); } catch {} }
+      return null;
+    }
 
-      // Parse JSON with best effort
-      function tryParseJSON(str) {
-        if (!str) return null;
-        // Remove code fences
-        str = str.replace(/```json|```/g, '').trim();
-        // Try direct parse
-        try { return JSON.parse(str); } catch {}
-        // Try substring between first { and last }
-        const first = str.indexOf('{');
-        const last = str.lastIndexOf('}');
-        if (first !== -1 && last !== -1 && last > first) {
-          const sub = str.slice(first, last + 1);
-          try { return JSON.parse(sub); } catch {}
-        }
-        return null;
-      }
-
-      // Prompts (en español, JSON-only)
-      function buildSeoPrompt(url) {
-        return `Eres un auditor SEO. Analiza el sitio: ${url}.
-Devuelve SOLO un JSON válido, sin comentarios ni markdown. Si algún dato no es verificable, usa null o "unknown".
-Schema:
+    // Prompts (JSON-first)
+    function buildSeoPrompt(url){ return `Eres un auditor SEO. Analiza el sitio: ${url}.
+Devuelve SOLO un JSON válido (sin markdown). Si no puedes saber algo, usa null o "unknown".
 {
-  "score": number,  // 0-100
+  "score": number,
   "titleTag": { "present": boolean, "length": number|null, "value": string|null, "issues": string[] },
   "metaDescription": { "present": boolean, "length": number|null, "value": string|null, "issues": string[] },
   "headings": { "h1": number|null, "h2": number|null, "h3": number|null, "issues": string[] },
   "mobile": { "status": "ok"|"warning"|"poor"|"unknown", "notes": string },
   "images": { "withAlt": number|null, "withoutAlt": number|null, "issues": string[] },
   "recommendations": string[]
-}`;
-      }
-
-      function buildSecPrompt(url) {
-        return `Eres un auditor de seguridad web. Analiza el sitio: ${url}.
-Devuelve SOLO un JSON válido, sin comentarios ni markdown. Si no puedes conocer algo, usa null o "unknown".
-Schema:
+}`;}
+    function buildSecPrompt(url){ return `Eres un auditor de seguridad web. Analiza el sitio: ${url}.
+Devuelve SOLO un JSON válido (sin markdown). Si no puedes saber algo, usa null o "unknown".
 {
-  "score": number, // 0-100
+  "score": number,
   "ssl": { "valid": boolean|null, "issues": string[] },
   "mixedContent": { "found": boolean|null, "details": string[] },
   "libraries": [ { "name": string, "version": string, "status": "ok"|"outdated"|"unknown" } ],
@@ -802,137 +718,184 @@ Schema:
     "referrerPolicy": "present"|"missing"|"unknown"
   },
   "recommendations": string[]
-}`;
-      }
-
-      function buildLlmPrompt(url) {
-        return `Genera un archivo 'llm.txt' en texto plano para el sitio: ${url}.
-Estructura estricta:
+}`;}
+    function buildLlmPrompt(url){ return `Genera un archivo 'llm.txt' en texto plano para el sitio: ${url}.
+Estructura:
 # LLM.txt for [URL]
 ## Site Overview
 [Breve descripción del propósito del sitio]
 ## Key Pages
 - [Lista de páginas/URLs clave]
 ## Content Structure
-[Resumen de cómo se organiza el contenido]
+[Resumen de la estructura]
 ## Important Information for AI
-[Pistas para agentes/LLMs: API docs, sitemaps, señales de estructura, actualizaciones]
+[Pistas para bots/LLMs]
+`; }
+
+    // Micropausas para mostrar animaciones aunque la API responda rápido
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    async function atLeast(promise, ms) {
+      const res = await Promise.race([Promise.all([promise, sleep(ms)]).then(([r]) => r)]);
+      return res;
+    }
+
+    // Datos demo si no hay API Key
+    function demoData(site) {
+      const seed = (site?.length || 10) * 13 % 100;
+      const rnd = (min,max) => Math.round(min + (seed/100)*(max-min));
+      const seo = {
+        score: rnd(62, 88),
+        titleTag: { present: true, length: 56, value: "Demo Title | " + site, issues: [] },
+        metaDescription: { present: true, length: 154, value: "Demo meta description for "+site, issues: [] },
+        headings: { h1: 1, h2: 3, h3: 4, issues: [] },
+        mobile: { status: "warning", notes: "Viewport ok; tamaños de fuente mejorables" },
+        images: { withAlt: 12, withoutAlt: 2, issues: ["2 imágenes sin alt"] },
+        recommendations: [
+          "Añade datos estructurados básicos",
+          "Mejora el enlazado interno",
+          "Optimiza títulos H2 con intención de búsqueda"
+        ]
+      };
+      const sec = {
+        score: rnd(60, 86),
+        ssl: { valid: true, issues: [] },
+        mixedContent: { found: false, details: [] },
+        libraries: [{ name: "jQuery", version: "3.5.1", status: "outdated" }],
+        headers: { xContentTypeOptions: "present", xFrameOptions: "missing", contentSecurityPolicy: "missing", referrerPolicy: "present" },
+        recommendations: ["Define Content-Security-Policy", "Añade X-Frame-Options", "Revisa dependencias desactualizadas"]
+      };
+      const llm = `# LLM.txt for ${site}
+## Site Overview
+Demo: sitio de ejemplo para pruebas de interfaz.
+
+## Key Pages
+- ${site}/
+- ${site}/about
+- ${site}/blog
+
+## Content Structure
+Home con hero + secciones; blog con listados y detalle.
+
+## Important Information for AI
+Sitemap en /sitemap.xml · Favicon en /favicon.ico · Robots en /robots.txt
 `;
+      return { seo, sec, llm };
+    }
+
+    // Flujo principal
+    analyzeBtn?.addEventListener('click', async () => {
+      const site = sanitizeUrl(urlInput.value.trim());
+      const key = apiKey.value.trim();
+      if (!site) { alert('Introduce una URL válida.'); return; }
+
+      // Mostrar pantallas
+      screenLanding.classList.add('hidden');
+      bgSlot.classList.add('hidden');
+      screenResults.style.display = 'none';
+      screenAnalyzing.style.display = 'grid';
+
+      let seoText='', secText='', llmTxt='';
+      let seoJSON=null, secJSON=null;
+
+      overallBar.style.width = '10%';
+      analyzingMsg.textContent = key ? 'Analizando con Gemini…' : 'Modo Demo (sin API Key)';
+
+      if (!key) {
+        // DEMO (sin llamadas a API)
+        await sleep(300); stepSEC.classList.add('active');
+        const demo = demoData(site);
+        await sleep(900); stepSEO.classList.remove('active'); stepSEO.classList.add('done');
+        await sleep(600); stepSEC.classList.remove('active'); stepSEC.classList.add('done'); stepLLM.classList.add('active');
+        await sleep(600); stepLLM.classList.remove('active'); stepLLM.classList.add('done'); overallBar.style.width = '100%';
+
+        seoJSON = demo.seo; secJSON = demo.sec; llmTxt = demo.llm;
+        seoText = JSON.stringify(demo.seo, null, 2);
+        secText = JSON.stringify(demo.sec, null, 2);
+      } else {
+        // Real API
+        try {
+          const pSEO = callGeminiAPI(buildSeoPrompt(site), key);
+          const pSEC = callGeminiAPI(buildSecPrompt(site), key);
+          const pLLM = callGeminiAPI(buildLlmPrompt(site), key);
+
+          try {
+            seoText = await atLeast(pSEO, 1400);
+            seoJSON = tryParseJSON(seoText);
+            stepSEO.classList.remove('active'); stepSEO.classList.add('done');
+            stepSEC.classList.add('active'); overallBar.style.width = '40%';
+          } catch(e){ console.error('SEO error', e); stepSEO.classList.remove('active'); stepSEO.classList.add('done'); }
+
+          try {
+            secText = await atLeast(pSEC, 1200);
+            secJSON = tryParseJSON(secText);
+            stepSEC.classList.remove('active'); stepSEC.classList.add('done');
+            stepLLM.classList.add('active'); overallBar.style.width = '70%';
+          } catch(e){ console.error('SEC error', e); stepSEC.classList.remove('active'); stepSEC.classList.add('done'); }
+
+          try {
+            llmTxt = await atLeast(pLLM, 900);
+            stepLLM.classList.remove('active'); stepLLM.classList.add('done'); overallBar.style.width = '100%';
+          } catch(e){ console.error('LLM error', e); stepLLM.classList.remove('active'); stepLLM.classList.add('done'); overallBar.style.width = '100%'; }
+        } catch (err) {
+          console.error('Proceso general falló', err);
+        }
       }
 
-      // Submit
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      // Render resultados
+      window.__seo = seoJSON || null; window.__sec = secJSON || null;
+      seoRaw.textContent = seoText || '—';
+      secRaw.textContent = secText || '—';
+      llmText.textContent = llmTxt || 'No se pudo generar el llm.txt';
 
-        const websiteUrl = sanitizeUrl(urlInput.value.trim());
-        const apiKey = keyInput.value.trim();
+      if (seoJSON) {
+        setGauge(seoArc, seoLabel, seoJSON.score || 0);
+        setRank(seoRank, seoJSON.score || 0);
+        kvSEO(seoKV, seoJSON);
+        const issues = [
+          ...(seoJSON.titleTag?.issues || []),
+          ...(seoJSON.metaDescription?.issues || []),
+          ...(seoJSON.headings?.issues || []),
+          ...(seoJSON.images?.issues || []),
+        ];
+        displayList(seoIssues, 'Problemas', issues);
+        displayList(seoRecos, 'Recomendaciones', seoJSON.recommendations || []);
+      } else {
+        setGauge(seoArc, seoLabel, 0); setRank(seoRank, 0);
+      }
 
-        if (!websiteUrl || !apiKey) {
-          alert('Rellena URL y API Key.');
-          return;
-        }
+      if (secJSON) {
+        setGauge(secArc, secLabel, secJSON.score || 0);
+        setRank(secRank, secJSON.score || 0);
+        kvSEC(secKV, secJSON);
+        const probs = [
+          ...(secJSON.ssl?.issues || []),
+          ...(secJSON.mixedContent?.details || []),
+          ...(secJSON.libraries || []).filter(l => l.status==='outdated').map(l => `Librería desactualizada: ${l.name} ${l.version}`),
+        ];
+        const h = secJSON.headers || {};
+        if (h.xContentTypeOptions === 'missing') probs.push('Falta X-Content-Type-Options');
+        if (h.xFrameOptions === 'missing') probs.push('Falta X-Frame-Options');
+        if (h.contentSecurityPolicy === 'missing') probs.push('Falta Content-Security-Policy');
+        if (h.referrerPolicy === 'missing') probs.push('Falta Referrer-Policy');
+        displayList(secIssues, 'Problemas', probs);
+        displayList(secRecos, 'Recomendaciones', secJSON.recommendations || []);
+      } else {
+        setGauge(secArc, secLabel, 0); setRank(secRank, 0);
+      }
 
-        // UI states
-        formSection.style.display = 'none';
-        loading.style.display = 'grid';
-        results.style.display = 'none';
+      updateChips(window.__seo, window.__sec);
+      setRadar(window.__seo);
 
-        // Reset prev
-        setRadial(seoScoreEl, 0, '');
-        setRadial(secScoreEl, 0, '');
-        chips.innerHTML = '<span class="chip">Calculando…</span>';
-        seoKV.innerHTML = secKV.innerHTML = '';
-        seoIssues.innerHTML = secIssues.innerHTML = '';
-        seoRecos.innerHTML = secRecos.innerHTML = '';
-        displayResult(seoRaw, 'Analizando…');
-        displayResult(secRaw, 'Analizando…');
-        displayResult(llmResult, 'Generando…');
+      // Mostrar resultados
+      screenAnalyzing.style.display = 'none';
+      screenResults.style.display = 'grid';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        const seoPrompt = buildSeoPrompt(websiteUrl);
-        const secPrompt = buildSecPrompt(websiteUrl);
-        const llmPrompt = buildLlmPrompt(websiteUrl);
-
-        let seoText = '', secText = '', llmText = '';
-        let seoJSON = null, secJSON = null;
-
-        try {
-          const pSEO = callGeminiAPI(seoPrompt, apiKey).then(t => { seoText = t; seoJSON = tryParseJSON(t); });
-          const pSEC = callGeminiAPI(secPrompt, apiKey).then(t => { secText = t; secJSON = tryParseJSON(t); });
-          const pLLM = callGeminiAPI(llmPrompt, apiKey).then(t => { llmText = t; });
-
-          await Promise.allSettled([pSEO, pSEC, pLLM]);
-        } catch (err) {
-          // no-op; manejamos debajo
-        }
-
-        // Render SEO
-        if (seoText) {
-          displayResult(seoRaw, seoText);
-        } else {
-          displayResult(seoRaw, 'No hubo respuesta de SEO', true);
-        }
-        if (seoJSON) {
-          window.__seo = seoJSON;
-          setRadial(seoScoreEl, seoJSON.score || 0, '');
-          kvBlock(seoKV, seoJSON);
-          const issues = [
-            ...(seoJSON.titleTag?.issues || []),
-            ...(seoJSON.metaDescription?.issues || []),
-            ...(seoJSON.headings?.issues || []),
-            ...(seoJSON.images?.issues || []),
-          ];
-          displayList(seoIssues, 'Problemas', issues);
-          displayList(seoRecos, 'Recomendaciones', seoJSON.recommendations || []);
-        } else {
-          window.__seo = null;
-        }
-
-        // Render Seguridad
-        if (secText) {
-          displayResult(secRaw, secText);
-        } else {
-          displayResult(secRaw, 'No hubo respuesta de Seguridad', true);
-        }
-        if (secJSON) {
-          window.__sec = secJSON;
-          setRadial(secScoreEl, secJSON.score || 0, '');
-          secKvBlock(secKV, secJSON);
-
-          const secIssuesArr = [
-            ...(secJSON.ssl?.issues || []),
-            ...(secJSON.mixedContent?.details || []),
-            ...(secJSON.libraries || []).filter(l => l.status === 'outdated').map(l => `Librería desactualizada: ${l.name} ${l.version}`),
-            ...(function() {
-              const hdr = secJSON.headers || {};
-              const miss = [];
-              if (hdr.xContentTypeOptions === 'missing') miss.push('Falta X-Content-Type-Options');
-              if (hdr.xFrameOptions === 'missing') miss.push('Falta X-Frame-Options');
-              if (hdr.contentSecurityPolicy === 'missing') miss.push('Falta Content-Security-Policy');
-              if (hdr.referrerPolicy === 'missing') miss.push('Falta Referrer-Policy');
-              return miss;
-            })()
-          ];
-          displayList(secIssues, 'Problemas', secIssuesArr);
-          displayList(secRecos, 'Recomendaciones', secJSON.recommendations || []);
-        } else {
-          window.__sec = null;
-        }
-
-        // Quick chips
-        updateChips(window.__seo, window.__sec);
-
-        // LLM txt
-        if (llmText) {
-          displayResult(llmResult, llmText);
-        } else {
-          displayResult(llmResult, 'No se pudo generar el llm.txt', true);
-        }
-
-        // Show results
-        loading.style.display = 'none';
-        results.style.display = 'block';
-        window.scrollTo({ top: results.offsetTop - 20, behavior: 'smooth' });
-      });
+      // Reset timeline para próximo análisis
+      setTimeout(() => {
+        stepSEO.className = 'step'; stepSEC.className = 'step'; stepLLM.className = 'step';
+        overallBar.style.width = '0%';
+      }, 300);
     });
   </script>
 </body>
